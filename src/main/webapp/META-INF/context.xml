@@ -1,2 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/medica"/>
+<Context path="/medica"> 
+    <Resource name="jdbc/HIMFG" auth="Container" type="javax.sql.DataSource"
+              maxActive="100" maxIdle="30" maxWait="10000"
+              username="sa" password="Sinue2104" 
+              driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+              url="jdbc:sqlserver://192.168.100.19:1433;databaseName=bdsigho" />
+</Context>
