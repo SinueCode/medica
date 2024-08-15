@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/medica"> 
-    <Resource name="jdbc/HIMFG" auth="Container" type="javax.sql.DataSource"
-              maxActive="100" maxIdle="30" maxWait="10000"
-              username="sa" password="Sinue2104" 
-              driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-              url="jdbc:sqlserver://192.168.100.19:1433;databaseName=bdsigho" />
+<Context path="/medica">
+  <Resource auth="Container" driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver" maxActive="100" maxIdle="30" maxWait="10000" name="jdbc/HIMFG" password="Sinue2104" type="javax.sql.DataSource" url="jdbc:sqlserver://192.168.100.14:1433;databaseName=bdsigho" username="sa"/>
+  <!--  <Resource auth="Container" driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver" maxActive="100" maxIdle="30" maxWait="10000" name="jdbc/HIMFG" password="Dragon181" type="javax.sql.DataSource" url="jdbc:sqlserver://172.16.55.10:1433;databaseName=bdsigho" username="sa"/>-->
 </Context>

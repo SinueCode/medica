@@ -1,0 +1,319 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 29 jul 2020, 10:12:34
+    Author     : Diana
+*/
+
+
+@keyframes shadow-pulse
+{
+    0% {
+        /*    box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);*/
+        box-shadow: 0 0 0 0px rgba(30, 144, 255, 0.1);
+    }
+    100% {
+        box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+    }
+}
+
+
+
+.formulario {
+    /* --------------------------------------- */
+    /* ----- Radio Button */
+    /* --------------------------------------- */
+    /* --------------------------------------- */
+    /* ----- Checkbox */
+    /* --------------------------------------- */ }
+.formulario h2 {
+    font-size: 16px;
+    color: #364D59;
+    margin: 0px 0px 8px;
+}
+/*, .formulario > div > div*/
+.formulario > div {
+    padding: 20px 0;
+    border-bottom: 1px solid #ccc; }
+
+    .formdisplay > div{padding: 20px 0;
+    border-bottom: 1px solid #ccc; }
+.formulario .radio label,
+.formulario .checkbox label {
+    display: inline-block;
+    cursor: pointer;
+    color: #02687C;
+    position: relative;
+    padding: 15px 15px 5px 51px;
+    font-size: 1em;
+    border-radius: 5px;
+    -webkit-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease; }
+.formulario .radio label:hover,
+.formulario .checkbox label:hover {
+    background: rgba(0, 116, 217, 0.1); }
+.formulario .radio label:before,
+.formulario .checkbox label:before {
+    content: "";
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    left: 15px;
+    border-radius: 50%;
+    background: none;
+    border: 3px solid #02687C; }
+.formulario input[type="radio"] {
+    display: none; }
+.formulario input[type="radio"]:checked + label:before {
+    display: none; }
+.formulario input[type="radio"]:checked + label {
+    padding: 5px 15px;
+    background: #02687C;
+    border-radius: 2px;
+    color: #fff; }
+.formulario .checkbox label:before {
+    border-radius: 3px; }
+.formulario .checkbox input[type="checkbox"] {
+    display: none; }
+.formulario .checkbox input[type="checkbox"]:checked + label:before {
+    display: none; }
+.formulario .checkbox input[type="checkbox"]:checked + label {
+    background: #02687C;
+    color: #fff;
+    padding: 5px 15px; }
+
+/*# sourceMappingURL=estilos.css.map */
+
+.checar {
+
+    background: rgba(30, 144, 255, 0.1) !important;
+    border-radius: 20%;
+    animation: shadow-pulse 1s infinite;
+
+
+}
+
+
+.panel-paginacion{
+    -webkit-background-size: auto;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: none;
+    background-origin: padding-box;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-top-width: 0px;
+    color: #EFC9A0;
+    display: block;
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    height: 38px;
+    line-height: 18px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 5px;
+    margin-top: 0px;
+    outline-color: #EFC9A0;
+    outline-style: none;
+    outline-width: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    position: relative;
+}
+
+.paginacion{
+    -webkit-background-size: auto;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: none;
+    background-origin: padding-box;
+    background-position: 0px 50%;
+    background-repeat: no-repeat;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-top-width: 0px;
+    color: #EFC9A0;
+    display: block;
+    float: right;
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    height: 22px;
+    line-height: 18px;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 10px;
+    outline-color: #EFC9A0;
+    outline-style: none;
+    outline-width: 0px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+}
+
+
+.paginacion li{
+    display: inline-block;
+    margin: 0 1px;
+    cursor: pointer;
+}
+
+.paginacion li a.page{
+    -webkit-background-size: auto;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #CCC;
+    background-image: none;
+    background-origin: padding-box;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-top-width: 0px;
+    color: #343434;
+    font-weight: bold;
+    cursor: auto;
+    display: block;
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    height: 22px;
+    line-height: 22px;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    outline-color: #D3AC6B;
+    outline-style: none;
+    outline-width: 0px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0px;
+    text-align: center;
+    text-decoration: none;
+}
+
+
+.paginacion li a.currentpage{
+    -webkit-background-size: auto;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #343434;
+    background-image: none;
+    background-origin: padding-box;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-top-width: 0px;
+    color: #FFF;
+    font-weight: bold;
+    cursor: auto;
+    display: block;
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    height: 22px;
+    line-height: 22px;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    outline-style: none;
+    outline-width: 0px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0px;
+    text-align: center;
+    text-decoration: none;
+}
+.paginaactual{
+    background-color: #343434;
+    color: #FFF;
+}
+
+.paginacion li a:hover{
+    background-color: #343434;
+    color: #FFF;
+
+    cursor: pointer;
+}
+
+.current{
+    -webkit-background-size: auto;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: transparent;
+    background-image: none;
+    background-origin: padding-box;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-top-width: 0px;
+    color: #EFC9A0;
+    display: inline-block;
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    height: 22px;
+    line-height: 18px;
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    margin-bottom: 0px;
+    margin-left: 1px;
+    margin-right: 1px;
+    margin-top: 0px;
+    outline-color: #EFC9A0;
+    outline-style: none;
+    outline-width: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    text-align: -webkit-auto;
+    width: 27px;
+}
