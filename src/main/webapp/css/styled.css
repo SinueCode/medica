@@ -9,6 +9,12 @@ and open the template in the editor.
 */
 
 
+@import url("https://fonts.googleapis.com/css?family=Maven+Pro:400,700");
+body {
+    font-family: "Maven Pro", sans-serif;
+    padding-top: 70px;
+}
+
 @keyframes shadow-pulse
 {
     0% {
@@ -20,32 +26,30 @@ and open the template in the editor.
     }
 }
 
-
-
 .formulario {
-    /* --------------------------------------- */
-    /* ----- Radio Button */
-    /* --------------------------------------- */
-    /* --------------------------------------- */
-    /* ----- Checkbox */
-    /* --------------------------------------- */ }
+/*     --------------------------------------- 
+     ----- Radio Button 
+     --------------------------------------- 
+     --------------------------------------- 
+     ----- Checkbox 
+     ---------------------------------------*/  }
 .formulario h2 {
     font-size: 16px;
     color: #364D59;
     margin: 0px 0px 8px;
 }
-/*, .formulario > div > div*/
-.formulario > div {
-    padding: 20px 0;
-    border-bottom: 1px solid #ccc; }
+*.formulario > div {
+   padding: 15px 0;
+   /*border-bottom: 1px solid #ccc;*/
+}
 
-    .formdisplay > div{padding: 20px 0;
-    border-bottom: 1px solid #ccc; }
+.formdisplay > div{padding: 20px 0;
+                   border-bottom: 1px solid #ccc; }
 .formulario .radio label,
 .formulario .checkbox label {
     display: inline-block;
     cursor: pointer;
-    color: #02687C;
+    color: #002E5B  ;  /*#02687C*/
     position: relative;
     padding: 15px 15px 5px 51px;
     font-size: 1em;
@@ -53,9 +57,11 @@ and open the template in the editor.
     -webkit-transition: all 0.3s ease;
     -o-transition: all 0.3s ease;
     transition: all 0.3s ease; }
+
 .formulario .radio label:hover,
 .formulario .checkbox label:hover {
-    background: rgba(0, 116, 217, 0.1); }
+    background: rgba(0, 116, 217, 0.1);
+}
 .formulario .radio label:before,
 .formulario .checkbox label:before {
     content: "";
@@ -66,26 +72,34 @@ and open the template in the editor.
     left: 15px;
     border-radius: 50%;
     background: none;
-    border: 3px solid #02687C; }
+    border: 3px solid #002E5B;
+}
 .formulario input[type="radio"] {
-    display: none; }
+    display: none;
+}
 .formulario input[type="radio"]:checked + label:before {
-    display: none; }
+    display: none;
+}
 .formulario input[type="radio"]:checked + label {
     padding: 5px 15px;
-    background: #02687C;
+    background: #002E5B;
     border-radius: 2px;
-    color: #fff; }
-.formulario .checkbox label:before {
-    border-radius: 3px; }
-.formulario .checkbox input[type="checkbox"] {
-    display: none; }
-.formulario .checkbox input[type="checkbox"]:checked + label:before {
-    display: none; }
-.formulario .checkbox input[type="checkbox"]:checked + label {
-    background: #02687C;
     color: #fff;
-    padding: 5px 15px; }
+}
+.formulario .checkbox label:before {
+    border-radius: 3px;
+}
+.formulario .checkbox input[type="checkbox"] {
+    display: none;
+}
+.formulario .checkbox input[type="checkbox"]:checked + label:before {
+    display: none;
+}
+.formulario .checkbox input[type="checkbox"]:checked + label {
+    background: #002E5B;
+    color: #fff;
+    padding: 5px 15px;
+}
 
 /*# sourceMappingURL=estilos.css.map */
 
@@ -99,7 +113,149 @@ and open the template in the editor.
 }
 
 
-.panel-paginacion{
+.full-screen {
+    padding: 8rem 0;
+}
+
+.small-text {
+    color: #5b5b5b;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 50px;
+    letter-spacing: 0.2px;
+}
+
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+ul li {
+    list-style: none;
+}
+
+a {
+    font-weight: normal;
+    text-decoration: none !important;
+    transition: all 0.4s ease;
+}
+a:hover {
+    color: #005AAB !important; /*#ffc200*/
+
+}
+
+.navbar-brand .uil {
+    font-size: 40px;
+}
+
+p {
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.5;
+    color: #5b5b5b;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    letter-spacing: -1px;
+}
+
+h1 {
+    color: #212121;
+    font-size: 2.8em;
+    margin: 24px 0;
+}
+
+h2 {
+    color: #353535;
+    font-size: 2.4em;
+    font-weight: bold;
+}
+
+h3 {
+    color: #484848;
+}
+
+h3,
+b, strong {
+    font-weight: bold;
+}
+
+
+
+.animated {
+    position: relative;
+}
+
+.animated-info {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: -15px;
+    min-width: 290px;
+    position: relative;
+}
+
+.animated-item {
+    color: #2AA9D9;
+}
+
+.animated-item {
+    font-size: 38px;
+    line-height: inherit;
+    display: block;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    animation: BottomTotop 6s linear infinite 0s;
+}
+.animated-item:nth-child(2n+2) {
+    animation-delay: 2s;
+}
+.animated-item:nth-child(3n+3) {
+    animation-delay: 4s;
+}
+
+@keyframes BottomTotop {
+    0% {
+        opacity: 0;
+    }
+    5% {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+    25% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+    30% {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    80% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/*diana diana diana diana diana diana */
+
+
+
+
+
+
+
+/*.panel-paginacion{
     -webkit-background-size: auto;
     background-attachment: scroll;
     background-clip: border-box;
@@ -316,4 +472,8 @@ and open the template in the editor.
     padding-top: 0px;
     text-align: -webkit-auto;
     width: 27px;
+}*/
+
+.form-select{
+    height: 55px;
 }

@@ -21,6 +21,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
 /**
@@ -39,7 +40,8 @@ public class dologin extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Resource(name = "jdbc/HIMFG")
+    // @Resource(name = "jdbc/HIMFG") //SQLServer    
+    @Resource(name = "jdbc/MEDICA") //MySQL
     private DataSource dataSource;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -50,13 +52,11 @@ public class dologin extends HttpServlet {
         PrintWriter out = response.getWriter();
         Map map = new HashMap();
         map.put("done", 0);
-
         Connection connx = dataSource.getConnection();
         Statement statement = null;
         ResultSet resultSet = null;
-
         try {
-//         HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
 //            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 //            String dbURL = conn.con();
 //            String username = conn.username();
@@ -64,31 +64,32 @@ public class dologin extends HttpServlet {
 
             String mensaje = "";
             String elemento = "";
-
-            boolean valida = true;
-
-            if (request.getParameter("username") == null || request.getParameter("pass") == null) {
+            boolean valida = true;           
+            if (request.getParameter("username") == null || request.getParameter("pass") == null) {                
                 valida = false;
                 map.put("done", 0);
                 map.put("mensaje", "Usuario y/o contraseña incorrecta");
             }
 
             if (valida) {
-
                 resultSet = null;
-                statement = connx.createStatement();
-                // select usu_clave from usuarios where usu_clave='admin' and USU_PASSWORD ='TI8015'
-
-                resultSet = statement.executeQuery(" select usu_clave from usuarios where usu_clave= '" + request.getParameter("username") + "' and USU_PASSWORD= '" + request.getParameter("pass") + "' ");
+                statement = connx.createStatement(); 
+              // System.out.println("SELECT ID_USUARIO, admin FROM usuarios WHERE usuario = '" + request.getParameter("username").toString().trim() + "' AND psw = sha1('" + request.getParameter("pass").toString().trim() + "') LIMIT 0,1   ");
+                resultSet = statement.executeQuery("SELECT ID_USUARIO, admin FROM usuarios WHERE usuario = '" + request.getParameter("username").toString().trim() + "' AND psw = sha1('" + request.getParameter("pass").toString().trim() + "') LIMIT 0,1   ");
+                System.out.println("LLEGA@@@@@@@@@@@@@@@@@1");
+                
                 if (resultSet.next()) {
-
+                   //  global.cFunciones.setSession(session, response, request, request.getParameter("icurp").toUpperCase(), spass, sperfil);
+                        System.out.println("LLEGA@@@@@@@@@@@@@@@@@2");
+                   global.cFunciones.setSession(connx, session, response, request, request.getParameter("username"));
                     map.put("done", 1);
                     map.put("mensaje", "lo encuentra");
-
+                    System.out.println("LLEGA@@@@@@@@@@@@@@@@@5");
+                    
                 } else {
                     map.put("done", 0);
                     map.put("mensaje", "Usuario y/o contraseña incorrecta");
-
+                    
                 }
             }
 
@@ -98,7 +99,6 @@ public class dologin extends HttpServlet {
             out.println(jsonInString);
 
         } catch (Exception e) {
-            
 
         } finally {
             out.close();

@@ -11,7 +11,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title> DIR. MÉDICA</title>
-        <link rel="shortcut icon" href="images/logo.gif">  
+        <link rel="shortcut icon" href="images/himfg-logo_ewzx59.webp">  
         <%=global.cFunciones.setHeadHtml(request)%>
         <link href="css/sindex.css" rel="stylesheet">
     </head>

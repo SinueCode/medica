@@ -111,7 +111,7 @@
             <div class="notif-content-l" style="">
                 <div class="notif-list-l menuleft hmenu-translateX-center" style="">
                     <ul class="ulmenu">
-
+                        <!--SUBCOMITE-->
                         <li>
                             <div class="subcat" style="font-size: 16px;">
                                 SUBCOMITÉ DE MORTALIDAD HOSPITALARIA
@@ -145,11 +145,35 @@
                                 <b>&nbsp; Estadística</b>
                             </a>
                         </li>
-
                         <hr/>
+                        <!--ENTREGA DE GUARDIA-->
                         <li>
                             <div class="subcat">
                                 ENTREGA DE GUARDIA
+                            </div>
+                        </li>
+                        <li>
+                            <a href="/medica/mortalidad/nrmortalidad.jsp">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus-fill" viewBox="0 0 16 16">
+                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M8.5 7v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 1 0"/>
+                                </svg>
+                                <b>&nbsp; Generar entrega</b>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/medica/mortalidad/nrmortalidad.jsp">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16">
+                                    <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1z"/>
+                                </svg>
+                                <b>&nbsp; Estadística</b>
+                            </a>
+                        </li>
+                        <hr/>
+                        
+                        <!--CENSO HOSPITALARIO -->
+                        <li>
+                            <div class="subcat">
+                                CENSO HOSPITALARIO
                             </div>
                         </li>
 
@@ -169,6 +193,35 @@
                                 <b>&nbsp; Estadística</b>
                             </a>
                         </li>
+                        <hr/>
+                        
+                         <!--OTROS -->
+                        <li>
+                            <div class="subcat">
+                               OTROS
+                            </div>
+                        </li>
+
+                        <li>
+                            <a href="/medica/mortalidad/nrmortalidad.jsp">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-plus-fill" viewBox="0 0 16 16">
+                                    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M8.5 7v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 1 0"/>
+                                </svg>
+                                <b>&nbsp; Generar entrega</b>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/medica/mortalidad/nrmortalidad.jsp">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16">
+                                    <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1z"/>
+                                </svg>
+                                <b>&nbsp; Estadística</b>
+                            </a>
+                        </li>
+                        <hr/>
+                        
+                        <!--SALIR -->
+                        
                         <li>
                             <a href=" /medica/cerrar_sesion.jsp">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
@@ -178,6 +231,12 @@
                                 <b>&nbsp; Salir</b> 
                             </a>
                         </li>
+
+
+
+
+
+
                     </ul>
                     <br/>
                     <br/>
@@ -187,10 +246,8 @@
     </div>
 </div>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbarmenu">
-
-    <a href="/medica/">
-        <img src="/medica/images/himfglogomain.png" width="30" height="40" alt="HIMFG">
-
+    <a href="/medica/inicio.jsp">
+        <img src="/medica/images/himfg-logo_ewzx59.webp" width="30" height="40" alt="HIMFG">          
     </a>
     <div class="navbar-toggler" >
         <div style=''>
@@ -200,8 +257,6 @@
                 </svg>
             </div> 
         </div>
-
-
     </div> 
     <div class="collapse navbar-collapse" style="margin-left: 15px;" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
