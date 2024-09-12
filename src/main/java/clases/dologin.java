@@ -56,7 +56,7 @@ public class dologin extends HttpServlet {
         Statement statement = null;
         ResultSet resultSet = null;
         try {
-        HttpSession session = request.getSession();
+            HttpSession session = request.getSession();
 //            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 //            String dbURL = conn.con();
 //            String username = conn.username();
@@ -64,8 +64,8 @@ public class dologin extends HttpServlet {
 
             String mensaje = "";
             String elemento = "";
-            boolean valida = true;           
-            if (request.getParameter("username") == null || request.getParameter("pass") == null) {                
+            boolean valida = true;
+            if (request.getParameter("username") == null || request.getParameter("pass") == null) {
                 valida = false;
                 map.put("done", 0);
                 map.put("mensaje", "Usuario y/o contraseña incorrecta");
@@ -73,26 +73,18 @@ public class dologin extends HttpServlet {
 
             if (valida) {
                 resultSet = null;
-                statement = connx.createStatement(); 
-              // System.out.println("SELECT ID_USUARIO, admin FROM usuarios WHERE usuario = '" + request.getParameter("username").toString().trim() + "' AND psw = sha1('" + request.getParameter("pass").toString().trim() + "') LIMIT 0,1   ");
-                resultSet = statement.executeQuery("SELECT ID_USUARIO, admin FROM usuarios WHERE usuario = '" + request.getParameter("username").toString().trim() + "' AND psw = sha1('" + request.getParameter("pass").toString().trim() + "') LIMIT 0,1   ");
-                System.out.println("LLEGA@@@@@@@@@@@@@@@@@1");
-                
+                statement = connx.createStatement();                
+                resultSet = statement.executeQuery("SELECT ID_USUARIO FROM usuarios WHERE usuario = '" + request.getParameter("username").toString().trim() + "' AND password = sha1('" + request.getParameter("pass").toString().trim() + "') LIMIT 0,1   ");
                 if (resultSet.next()) {
-                   //  global.cFunciones.setSession(session, response, request, request.getParameter("icurp").toUpperCase(), spass, sperfil);
-                        System.out.println("LLEGA@@@@@@@@@@@@@@@@@2");
-                   global.cFunciones.setSession(connx, session, response, request, request.getParameter("username"));
+                    //  global.cFunciones.setSession(session, response, request, request.getParameter("icurp").toUpperCase(), spass, sperfil);
+                    global.cFunciones.setSession(connx, session, response, request, request.getParameter("username"));
                     map.put("done", 1);
                     map.put("mensaje", "lo encuentra");
-                    System.out.println("LLEGA@@@@@@@@@@@@@@@@@5");
-                    
                 } else {
                     map.put("done", 0);
                     map.put("mensaje", "Usuario y/o contraseña incorrecta");
-                    
                 }
             }
-
             Gson gson = new Gson();
             gson.toJson(map);
             String jsonInString = gson.toJson(map);

@@ -43,7 +43,7 @@
                                 <br>
 
                                 <p>
-                                    <b> ¡Bienvenido xsdasdasdasd!</b>
+                                    <b> ¡Bienvenido <%=session.getAttribute("username")%>!</b>
 
                                     a nuestro espacio dedicado al apoyo de las actividades de la Dirección Médica. En este sitio, encontrarás, herramientas diseñadas para facilitar y optimizar procesos  ????? médicos.
 

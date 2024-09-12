@@ -2057,3 +2057,30 @@ function getheight() {
     var who = d.offsetHeight ? d : b;
     return Math.max(who.scrollHeight, who.offsetHeight);
 }
+
+function solonumeros(e) {
+
+    tecla = (document.all) ? e.keyCode : e.which;
+    if (tecla == 8)
+        return true; //Tecla de retroceso (para poder borrar)
+    if (tecla == 13)
+        return true;
+    if (tecla == 0)
+        return true;
+    patron = /\d/;
+    te = String.fromCharCode(tecla);
+    return patron.test(te);
+}
+
+function soloNombresConAcen(e) {
+    tecla = (document.all) ? e.keyCode : e.which;
+    if (tecla == 8)
+        return true;
+    if (tecla == 0)
+        return true;
+    if (tecla == 13)
+        return true;
+    patron = /[a-zA-ZÑÁÉÍÓÚñáéíóú ]/;
+    te = String.fromCharCode(tecla);
+    return patron.test(te);
+}
