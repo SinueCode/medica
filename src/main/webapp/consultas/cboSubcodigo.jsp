@@ -14,7 +14,7 @@
 </sql:query>
 
  <label for="icbosubcodigo_arch">Sub-Clasificación:</label> 
-<select id="cbosubcodigo_arch" name="cbosubcodigo_arch" class="selectpicker"  data-show-subtext="true" data-live-search="true" data-width="600px"  >                            
+<select id="cbosubcodigo_arch" name="cbosubcodigo_arch" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true" >                            
     <option value="0" selected >Sub-Clasif.</option>
     <c:forEach var="subcodigoar" begin="0" items="${qsubcodigoar.rowsByIndex}">
         <option data-subtext="${subcodigoar[1]}" value="${subcodigoar[0]}">${subcodigoar[0]}</option>

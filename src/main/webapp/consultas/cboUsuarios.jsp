@@ -32,7 +32,7 @@
 %>
 
 
-<select id="cbonomremit" name="cbonomremit" class="custom-select form-select" data-live-search="true">     
+<select id="cbonomremit" name="cbonomremit" class="form-select input-b" data-live-search="true">     
     <option value="-1">SELECCIONE...</option>
     <c:forEach var="camas" begin="0" items="${consulta.rowsByIndex}">
         <option value="${camas[0]}">${camas[1]}</option>        

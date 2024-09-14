@@ -54,7 +54,7 @@
                     </div>
                 </div>               
             </div>
-            <form id="frmcomitem" method="POST" class="formulario"  action=" ">  
+            <form id="frm_RegOficio" method="POST" class="formulario"  action="../of/recibeOficios?">  
                 <div class="form-group col-md">
                     <div class="form-check">
                         <label>S/N</label>
@@ -64,7 +64,7 @@
                 <div id="divnumof" class="divnumof"> 
                     <div class="form-group col-md">
                         <b> No. de oficio:</b>
-                        <select id='cbodeptoremit' name='cbodeptoremit' class="selectpicker" style=" height: 55px;" data-show-subtext="false" data-live-search="true" data-width="85px" height="200px">
+                        <select id='cbodeptoremit' name='cbodeptoremit' class="selectpicker form-control" style=" height: 55px;" data-show-subtext="false" data-live-search="true" data-width="85px" height="200px">
                             <option value="0" selected >Dpto.</option>
                             <sql:query var="qareas" dataSource="jdbc/MEDICA">
                                 select clave, cdescripcion 
@@ -77,7 +77,7 @@
                             </c:forEach>
                         </select> /
                         <input type="text" class="form-control ioficio onlyi input-b" id="iconsecutivo" name="iconsecutivo" placeholder="# Of." maxlength="4" onkeypress="return solonumeros(event, 'numemp');">  
-                        <select id="cboannio" name="cboannio" class="selectpicker" data-live-search="false" style="" style="" data-width="85px">
+                        <select id="cboannio" name="cboannio" class="selectpicker form-control" data-live-search="false" style="" style="" data-width="85px">
                             <option value="0">Año</option>
                             <option value="1">2023</option>
                             <option value="2">2024</option>                         
@@ -87,16 +87,16 @@
                 <div id="divnumof_sin" class="divnumof_sin"  style="display: none"> 
                     <div class="form-group col-md">
                         <b> No. de referencia:</b>
-                        <input type="text" class="form-control ireferencia " id="iotro_numof" name="iotro_numof" placeholder="# de referencia" maxlength="38">  
+                        <input type="text" class="form-control ireferencia input-b " id="iotro_numof" name="iotro_numof" placeholder="# de referencia" maxlength="38">  
 
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="ifecharecep">Fecha de recepción:</label>
                         <input type="text" class="form-control input-b" id="ifecharecep" name="ifecharecep" placeholder="Fecha de recepción" readonly>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="icbonomrec">Nombre de quien recibe:</label>
                         <select id="cboperdm" name="cboperdm" class="form-select input-b" data-live-search="true">                            
                             <option value="-1">Seleccione...</option>
@@ -114,7 +114,7 @@
 
                     <div class="col-md-6">
                         <label for="icbocodigo_arch">Clasificación:</label>                      
-                        <select id="cbocodigo_arch" name="cbocodigo_arch" class="selectpicker"  data-show-subtext="true" data-live-search="true" data-width="600px"  >                            
+                        <select id="cbocodigo_arch" name="cbocodigo_arch" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
                             <option value="0" selected >Clasif.</option>
                             <sql:query var="qcodigoar" dataSource="jdbc/MEDICA">
                                 select codigo, cdescripcion from of_ctl_archiv_p 
@@ -127,7 +127,7 @@
                     </div> 
                     <div class="col-md-6">
                         <div id="divcbosubcod">
-                           
+
                         </div>
                     </div>                    
                 </div>
@@ -139,11 +139,11 @@
                     <div class="form-group row">
                         <div class="col-md-6">
                             <label for="dep_remitente">Departamento:</label>
-                            <input type="text" class="form-control" id="dep_remitente_sn" name="dep_remitente_sn" style="   text-align: center; ">
+                            <input type="text" class="form-control input-b" id="dep_remitente_sn" name="dep_remitente_sn" style="   text-align: center; ">
                         </div>
                         <div class="col-md-6">
                             <label for="inomrem">Nombre del remitente:</label>                      
-                            <input type="text" class="form-control" id="nom_remitente_sn" name="nom_remitente_sn" style="   text-align: center; ">
+                            <input type="text" class="form-control input-b" id="nom_remitente_sn" name="nom_remitente_sn" style="   text-align: center; ">
                         </div>
                         <br>
                     </div>
@@ -153,12 +153,12 @@
                     <div class="form-group row">
                         <div class="col-md-6">
                             <label for="dep_remitente">Departamento:</label>
-                            <input type="text" class="form-control" id="dep_remitente" name="dep_remitente"  readonly style=" background: #FFFFFF;   border-style: dashed; cursor: default; font-weight:bold;  text-align: center; ">
+                            <input type="text" class="form-control input-b" id="dep_remitente" name="dep_remitente"  readonly style=" background: #FFFFFF;   border-style: dashed; cursor: default; font-weight:bold;  text-align: center; ">
                         </div>
                         <div class="col-md-6">
                             <label for="inomrem">Nombre del remitente:</label>                      
                             <div id="divcboremitente">
-                                <select style="" name="" id=""  class="form-select" data-live-search="false" style="" style="">
+                                <select style="" name="" id=""  class="form-select input-b" data-live-search="false" style="" style="">
                                     <option value="0">Seleccione...</option>                           
                                 </select>
                             </div>
@@ -175,15 +175,15 @@
                                     <div class="form-group row">
                                         <div class="col-md-3 mb-3 mb-lg-0">
                                             <label for="iotron">Nombre:</label>
-                                            <input type="text" class="form-control" id="iotron" name="iotron" placeholder="Nombre">
+                                            <input type="text" class="form-control input-b" id="iotron" name="iotron" placeholder="Nombre">
                                         </div>
                                         <div class="col-md-3 mb-3 mb-lg-0">
                                             <label for="iotroap1">Apellido1:</label>
-                                            <input type="text" class="form-control" id="iotroap1" name="iotroap1" placeholder="Apellido1">
+                                            <input type="text" class="form-control input-b" id="iotroap1" name="iotroap1" placeholder="Apellido1">
                                         </div>
                                         <div class="col-md-3 mb-3 mb-lg-0">
                                             <label for="iotroap2">Apellido2:</label>
-                                            <input type="text" class="form-control" id="iotroap2" name="iotroap2" placeholder="Apellido2">
+                                            <input type="text" class="form-control input-b" id="iotroap2" name="iotroap2" placeholder="Apellido2">
                                         </div>
                                         <br>
                                     </div>
@@ -232,7 +232,7 @@
                             </select>
                         </div>
                         <div id="divdepto_destotro"  style="display: none">
-                            <select id="cbodepto_dest" name="cbodepto_dest" class="selectpicker"  data-show-subtext="true" data-live-search="true" data-width="600px"  >                            
+                            <select id="cbodepto_dest" name="cbodepto_dest" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
                                 <option value="0" selected >Dpto.</option>
                                 <sql:query var="qareas_otro" dataSource="jdbc/MEDICA">
                                     select clave, cdescripcion from ctl_departamentos 
@@ -248,8 +248,7 @@
                     <div class="col-md-6">
                         <label for="icbonomrec">Nombre(Dirigido a):</label>
                         <div id="divcbodestinatario">
-
-                            <select style="width: 350px;" name="" id=""  class="selectpicker form-control" data-live-search="false" style="" style="">
+                            <select style="width: 350px;" name="" id=""  class="selectpicker form-control" data-live-search="false">
                                 <option value="0">Seleccione...</option>                           
                             </select>
                         </div>
@@ -269,15 +268,15 @@
                                 <div class="form-group row">
                                     <div class="col-md-3 mb-3 mb-lg-0">
                                         <label for="iotrondest">Nombre:</label>
-                                        <input type="text" class="form-control" id="iotrondest" name="iotrondest" placeholder="Nombre">
+                                        <input type="text" class="form-control input-b" id="iotrondest" name="iotrondest" placeholder="Nombre">
                                     </div>
                                     <div class="col-md-3 mb-3 mb-lg-0">
                                         <label for="iotroap1dest">Apellido1:</label>
-                                        <input type="text" class="form-control" id="iotroap1dest" name="iotroap1dest" placeholder="Apellido1">
+                                        <input type="text" class="form-control input-b" id="iotroap1dest" name="iotroap1dest" placeholder="Apellido1">
                                     </div>
                                     <div class="col-md-3 mb-3 mb-lg-0">
                                         <label for="iotroap2dest">Apellido2:</label>
-                                        <input type="text" class="form-control" id="iotroap2dest" name="iotroap2dest" placeholder="Apellido2">
+                                        <input type="text" class="form-control input-b" id="iotroap2dest" name="iotroap2dest" placeholder="Apellido2">
                                     </div>
                                     <br>
                                 </div>
@@ -290,7 +289,7 @@
                 <div class="form-group row">
                     <div class="col-md-6">
                         <label for="icbonomrec">Turnado a:</label>
-                        <select id="cbodepto_tur" name="cbodepto_tur" class="selectpicker"  data-show-subtext="true" data-live-search="true" data-width="600px"  >                            
+                        <select id="cbodepto_tur" name="cbodepto_tur" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
                             <option value="0" selected >Dpto.</option>
                             <sql:query var="qareas_tur" dataSource="jdbc/MEDICA">
                                 select clave, cdescripcion from ctl_departamentos 
@@ -301,9 +300,9 @@
                             </c:forEach>
                         </select>
                     </div>                    
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="ifecharecep">Fecha limite de respuesta:</label>
-                        <input type="text" class="form-control" id="ifecha_limresp" name="ifecha_limresp" placeholder="Fecha limite de respuesta" readonly>
+                        <input type="text" class="form-control input-b" id="ifecha_limresp" name="ifecha_limresp" placeholder="Fecha limite de respuesta" readonly>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -357,24 +356,21 @@
                         $("#divcbosubcod").html(data);
                         $("#cbosubcodigo_arch").selectpicker("refresh");
                     });
-                //    $('#divcbosubcod').load('../consultas/cboSubcodigo.jsp?id_cod=' + id_cod);
+                    //    $('#divcbosubcod').load('../consultas/cboSubcodigo.jsp?id_cod=' + id_cod);
                 });
             });
 
             $("#cbodeptoremit").change(function () {
                 var id = $(this).val();
-                // alert(id);
                 var option = $('option:selected', this).attr('data-subtext');
                 $('#dep_remitente').val(option);
                 $("#cbodeptoremit option:selected").each(function () {
                     $('#divcboremitente').load('../consultas/cboUsuarios.jsp?valor=' + id);
                 });
 
-                // limpa 
-                //  $("#ifecharecep").val('');   //fecha de recep
+                // limpa          
                 $("#iconsecutivo").val(''); //num de oficio
-                $('#cboannio').selectpicker('val', '0');     //año
-                // $("#cboperdm").val('-1');  // nom quien recibe             
+                $('#cboannio').selectpicker('val', '0');     //año                    
                 $("#cbonomremit").val('-1'); // nom remitente
                 $('.otroremitentename').hide();
                 $("#txtasunto").val('');   //asunto
@@ -416,14 +412,11 @@
                     $('#depto_sn').show();
                     $('#depto_cn').hide();
                     //limpia
-
                     $('#cbodeptoremit').selectpicker('val', '0');
                     $('#divcboremitente').load('../consultas/cboUsuarios.jsp?valor=0');
-
                     //  alert(a)
                     $("#iconsecutivo").val(''); //num de oficio
-                    $('#cboannio').selectpicker('val', '0');     //año
-                    //   $("#cboperdm").val('-1');  // nom quien recibe 
+                    $('#cboannio').selectpicker('val', '0');     //año                
                     $('.otroremitentename').hide();
                     $("#txtasunto").val('');   //asunto
                     $("#txtobservaciones").val(''); //observaciones
@@ -433,10 +426,8 @@
                 } else {
                     $('#divnumof').show();
                     $('#depto_cn').show();
-
                     $('#divnumof_sin').hide();
                     $('#depto_sn').hide();
-
                     $("#iotro_numof").val('');
 
 
@@ -453,6 +444,7 @@
                     $('#divdepto_destmedica').hide();
                     $('#divdepto_destotro').show();
                     $('#cbodepto_dest').selectpicker('val', '0');
+                    $('#divcbodestinatario').load('../consultas/cboUsuariosdest.jsp?valor=0');
                     $('#cbonomdest').val('-1');
                     // cbonomdest
                 } else {
@@ -468,12 +460,47 @@
             //Departamentop
             $("#cbodepto_dest").change(function () {
                 var id = $(this).val();
-                alert(id);
+                //alert(id);
                 $('#divcbodestinatario').load('../consultas/cboUsuariosdest.jsp?valor=' + id);
                 $("#iotrondest").val('');
                 $("#iotroap1dest").val('');
                 $("#iotroap2dest").val('');
                 $('.otrodestinatarioname').hide();
+            });
+
+
+
+            $('#frm_RegOficio').ajaxForm({
+
+                success: function (data) {
+
+                   // alert("aquiiiiiiiiii");
+                    if (data.done === 0) {
+                        elemento = data.elemento;
+                        alert(data.mensaje);
+                         alert(elemento);
+                    $('#' + elemento).trigger('focus');
+                          $('html, body').animate({scrollTop: $('#' + elemento).offset().top - 86}, 15);
+         
+        
+        
+                    } else {
+
+                       
+                        //  folio_receta = data.folio_receta;
+                        alert("El oficio se registro correctamente, FOLIO CONSECUTIVO:"); //// 
+                        // window.open('/HIM/receta/generaReceta?&folio_receta=' + folio_receta);
+                        // $('.btnguardar').attr("disabled", "disabled");
+                        //  $('.btnguardar').append('<img src="../imagenes/loading.gif" width="11" height="11" alt="" />');
+
+                    }
+                },
+                beforeSubmit: function () {
+
+                    // $('.btnguardar').attr("disabled", "disabled");
+
+
+                }
             });
 
 
