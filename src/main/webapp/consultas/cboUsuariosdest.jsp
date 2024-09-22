@@ -11,6 +11,7 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
 
 <%
+    // System.out.println("llega valor-->"+request.getParameter("valor"));
     if (request.getParameter("valor").equals("0")) {
 %>
 <sql:query var="consulta" dataSource="jdbc/MEDICA">
@@ -29,7 +30,7 @@
 %>
 <select id="cbonomdest" name="cbonomdest" class="form-select input-b" data-live-search="true">     
     <option value="-1">SELECCIONE...</option>
-    <c:forEach var="camas" begin="0" items="${consulta.rowsByIndex}">
-        <option value="${camas[0]}">${camas[1]}</option>
+    <c:forEach var="nomdest" begin="0" items="${consulta.rowsByIndex}">
+        <option value="${nomdest[0]}">${nomdest[1]}</option>
     </c:forEach>
 </select>

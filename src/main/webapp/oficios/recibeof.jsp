@@ -54,7 +54,7 @@
                     </div>
                 </div>               
             </div>
-            <form id="frm_RegOficio" method="POST" class="formulario"  action="../of/recibeOficios?">  
+            <form id="frm_RegOficio" method="POST" class="formulario"  action="../of/recibeOficios">  
                 <div class="form-group col-md">
                     <div class="form-check">
                         <label>S/N</label>
@@ -78,9 +78,13 @@
                         </select> /
                         <input type="text" class="form-control ioficio onlyi input-b" id="iconsecutivo" name="iconsecutivo" placeholder="# Of." maxlength="4" onkeypress="return solonumeros(event, 'numemp');">  
                         <select id="cboannio" name="cboannio" class="selectpicker form-control" data-live-search="false" style="" style="" data-width="85px">
-                            <option value="0">Año</option>
-                            <option value="1">2023</option>
-                            <option value="2">2024</option>                         
+                            <option value="0" selected >Año</option>
+                            <sql:query var="qannio" dataSource="jdbc/MEDICA">
+                                SELECT DATE_FORMAT(now(), '%Y') AS 'anio' UNION SELECT DATE_FORMAT( DATE_ADD(now(), INTERVAL -1 YEAR), '%Y') AS 'anio' 
+                            </sql:query>
+                            <c:forEach var="annio" begin="0" items="${qannio.rowsByIndex}">
+                                <option value="${annio[0]}">${annio[0]}</option>
+                            </c:forEach>           
                         </select>                     
                     </div>
                 </div>
@@ -94,7 +98,7 @@
                 <div class="form-group row">
                     <div class="col-md-4">
                         <label for="ifecharecep">Fecha de recepción:</label>
-                        <input type="text" class="form-control input-b" id="ifecharecep" name="ifecharecep" placeholder="Fecha de recepción" readonly>
+                        <input type="text" class="form-control input-b" id="ifecharecep" name="ifecharecep" placeholder="Fecha de recepción" >
                     </div>
                     <div class="col-md-4">
                         <label for="icbonomrec">Nombre de quien recibe:</label>
@@ -110,31 +114,10 @@
                     </div>                   
                     <br>
                 </div>
-                <div class="form-group row">
-
-                    <div class="col-md-6">
-                        <label for="icbocodigo_arch">Clasificación:</label>                      
-                        <select id="cbocodigo_arch" name="cbocodigo_arch" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
-                            <option value="0" selected >Clasif.</option>
-                            <sql:query var="qcodigoar" dataSource="jdbc/MEDICA">
-                                select codigo, cdescripcion from of_ctl_archiv_p 
-                                order by id
-                            </sql:query>
-                            <c:forEach var="codigoar" begin="0" items="${qcodigoar.rowsByIndex}">
-                                <option data-subtext="${codigoar[1]}" value="${codigoar[0]}">${codigoar[0]}</option>
-                            </c:forEach>
-                        </select>
-                    </div> 
-                    <div class="col-md-6">
-                        <div id="divcbosubcod">
-
-                        </div>
-                    </div>                    
-                </div>
+                <hr> 
                 <b>
                     Enviado por (remitente):
                 </b>
-
                 <div id="depto_sn"  style="display: none">
                     <div class="form-group row">
                         <div class="col-md-6">
@@ -193,16 +176,60 @@
                     </div>
                 </div>
 
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label for="icbocodigo_arch">Clasificación:</label>                      
+                        <select id="cbocodigo_arch" name="cbocodigo_arch" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
+                            <option value="0" selected >Clasif.</option>
+                            <sql:query var="qcodigoar" dataSource="jdbc/MEDICA">
+                                select codigo, cdescripcion from of_ctl_archiv_p 
+                                order by id
+                            </sql:query>
+                            <c:forEach var="codigoar" begin="0" items="${qcodigoar.rowsByIndex}">
+                                <option data-subtext="${codigoar[1]}" value="${codigoar[0]}">${codigoar[0]}</option>
+                            </c:forEach>
+                        </select>
+                    </div> 
+                    <div class="col-md-6">
+                        <div id="divcbosubcod">
 
-                <div class="form-group">
-                    <label for="txtasunto">Asunto:</label>
-                    <textarea class="form-control" id="txtasunto" name="txtasunto" rows="3" placeholder="Asunto..."></textarea>
+                        </div>
+                    </div>                    
                 </div>
-                <div class="form-group">
-                    <label for="exampleFormControlTextarea1">Observaciones</label>
-                    <textarea class="form-control" id="txtobservaciones" name="txtobservaciones" rows="3" placeholder="Observaciones..."></textarea>
-                    <br>
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <div id="divcbocarpeta">
+
+                        </div>
+                    </div> 
+                    <div class="col-md-6">
+
+
+                        <!--                                              <div class="btn-group dropleft btndropests" style="float: right" id="lola2" >
+                                                    <a class="docama_8585 ?>" data="555>"><span class="dropdown-item pointerc" >
+                                                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                                                            </svg> ADD Nuevo folder
+                                                        </span>
+                                                    </a>
+                                                </div>-->
+
+                    </div>                    
                 </div>
+
+
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label for="txtasunto">Asunto:</label>
+                        <textarea class="form-control" id="txtasunto" name="txtasunto" rows="3" placeholder="Asunto..."></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="exampleFormControlTextarea1">Observaciones</label>
+                        <textarea class="form-control" id="txtobservaciones" name="txtobservaciones" rows="3" placeholder="Observaciones..."></textarea>
+                    </div>                
+                </div>   
+                <hr> 
                 <b>
                     Destinatario:
                 </b>
@@ -252,12 +279,7 @@
                                 <option value="0">Seleccione...</option>                           
                             </select>
                         </div>
-
                     </div>
-
-
-
-
                     <div id="divotrodestinatario" class="otrodestinatarioname" style="display: none">  
                         <br>
                         <div class="card">
@@ -300,22 +322,34 @@
                             </c:forEach>
                         </select>
                     </div>                    
-                    <div class="col-md-4">
-                        <label for="ifecharecep">Fecha limite de respuesta:</label>
+                    <div class="col-md-6">
+                        <label for="ifecha_limresp">Fecha limite de respuesta:</label>
                         <input type="text" class="form-control input-b" id="ifecha_limresp" name="ifecha_limresp" placeholder="Fecha limite de respuesta" readonly>
                     </div>
+                    <!--                    <div class="col-md-3">
+                                            <label for="icbonomrec">Nombre de quien recibe:</label>
+                                            <select id="cboperdm" name="cboperdm" class="form-select input-b" data-live-search="true">                            
+                                                <option value="-1">Seleccione...</option>
+                    <sql:query var="qperdm" dataSource="jdbc/MEDICA">
+                        select id, cdescripcion from of_ctl_personal_dm order by cdescripcion asc
+                    </sql:query>
+                    <c:forEach var="perdm" begin="0" items="${qperdm.rowsByIndex}">
+                        <option data-subtext="${perdm[1]}" value="${perdm[0]}">${perdm[1]}</option>
+                    </c:forEach>
+                </select>
+            </div>      -->
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-10 ">
-
-
-                    </div>
+                    <div class="col-md-10 "></div>
                     <div class="col-md-2 ">
                         <input type="submit" class="btn btn-primary" type="submit" value="Guardar">
                     </div>
                 </div>
 
                 <br> <br> <br> <br> <br>
+
+
+
             </form>
         </div>
 
@@ -333,7 +367,6 @@
                     , autoclose: true
                     , step: 1
                 });
-
                 $('#ifecha_limresp').datetimepicker({
                     format: 'd/m/Y H:i',
                     language: 'es'
@@ -344,40 +377,39 @@
                     , step: 1
                 });
             });
-
-
-            $('#divcbodestinatario').load('../consultas/cboUsuarios.jsp?valor=2000'); //destinatario dirección médica
+            $('#divcbodestinatario').load('../consultas/cboUsuariosdest.jsp?valor=2000'); //destinatario dirección médica
 
             $("#cbocodigo_arch").change(function () {
                 var id_cod = $(this).val();
                 var option_cod = $('option:selected', this).attr('data-subtext');
-                $("#cbocodigo_arch option:selected").each(function () {
-                    $.post("../consultas/cboSubcodigo.jsp", {id_cod: id_cod}, function (data) {//sinue                        
-                        $("#divcbosubcod").html(data);
-                        $("#cbosubcodigo_arch").selectpicker("refresh");
-                    });
-                    //    $('#divcbosubcod').load('../consultas/cboSubcodigo.jsp?id_cod=' + id_cod);
+                
+                $.post("../consultas/cboSubcodigo.jsp", {id_cod: id_cod}, function (data) {
+                    $("#divcbosubcod").html(data);
+                    $("#cbosubcodigo_arch").selectpicker("refresh");
+                    $('#divcbocarpeta').html('');
+                    //$("#divcbocarpeta").html(data);
                 });
+                //$('#divcbocarpeta').hide();  ///diana pruebas
             });
+            //otra carpeta
+
 
             $("#cbodeptoremit").change(function () {
                 var id = $(this).val();
                 var option = $('option:selected', this).attr('data-subtext');
                 $('#dep_remitente').val(option);
                 $("#cbodeptoremit option:selected").each(function () {
+                    //alert(id);
                     $('#divcboremitente').load('../consultas/cboUsuarios.jsp?valor=' + id);
                 });
-
                 // limpa          
                 $("#iconsecutivo").val(''); //num de oficio
-                $('#cboannio').selectpicker('val', '0');     //año                    
+                $('#cboannio').selectpicker('val', '0'); //año                    
                 $("#cbonomremit").val('-1'); // nom remitente
                 $('.otroremitentename').hide();
-                $("#txtasunto").val('');   //asunto
+                $("#txtasunto").val(''); //asunto
                 $("#txtobservaciones").val(''); //observaciones
             });
-
-
             //otro remitente
             $(document).on('change', '#cbonomremit', function () {
                 $("#iotron").val('');
@@ -389,8 +421,6 @@
                     $('.otroremitentename').hide();
                 }
             });
-
-
             //otro destinatario
             $(document).on('change', '#cbonomdest', function () {
                 $("#iotrondest").val('');
@@ -402,9 +432,6 @@
                     $('.otrodestinatarioname').hide();
                 }
             });
-
-
-
             $("#chk-sn").click(function () {
                 if ($('#chk-sn').prop('checked')) { //sin número de oficio 
                     $('#divnumof').hide();
@@ -416,12 +443,12 @@
                     $('#divcboremitente').load('../consultas/cboUsuarios.jsp?valor=0');
                     //  alert(a)
                     $("#iconsecutivo").val(''); //num de oficio
-                    $('#cboannio').selectpicker('val', '0');     //año                
+                    $('#cboannio').selectpicker('val', '0'); //año                
                     $('.otroremitentename').hide();
-                    $("#txtasunto").val('');   //asunto
+                    $("#txtasunto").val(''); //asunto
                     $("#txtobservaciones").val(''); //observaciones
-                    $("#dep_remitente_sn").val('');   //depto sin num de oficio
-                    $("#nom_remitente_sn").val('');   //nom sin num de oficio
+                    $("#dep_remitente_sn").val(''); //depto sin num de oficio
+                    $("#nom_remitente_sn").val(''); //nom sin num de oficio
                     $('#dep_remitente').val('');
                 } else {
                     $('#divnumof').show();
@@ -429,11 +456,8 @@
                     $('#divnumof_sin').hide();
                     $('#depto_sn').hide();
                     $("#iotro_numof").val('');
-
-
                 }
             });
-
             //CC
             $('#chk-cc').click(function () {
                 $('.otrodestinatarioname').hide();
@@ -455,8 +479,6 @@
                     $('#cbonomdest').val('-1');
                 }
             });
-
-
             //Departamentop
             $("#cbodepto_dest").change(function () {
                 var id = $(this).val();
@@ -467,41 +489,38 @@
                 $("#iotroap2dest").val('');
                 $('.otrodestinatarioname').hide();
             });
-
-
-
             $('#frm_RegOficio').ajaxForm({
-
                 success: function (data) {
-
-                   // alert("aquiiiiiiiiii");
+                    // alert("aquiiiiiiiiii");
                     if (data.done === 0) {
                         elemento = data.elemento;
                         alert(data.mensaje);
-                         alert(elemento);
-                    $('#' + elemento).trigger('focus');
-                          $('html, body').animate({scrollTop: $('#' + elemento).offset().top - 86}, 15);
-         
-        
-        
+                        //   alert(elemento);
+                        $('#' + elemento).trigger('focus');
+                        $('html, body').animate({scrollTop: $('#' + elemento).offset().top - 86}, 15);
                     } else {
-
-                       
                         //  folio_receta = data.folio_receta;
                         alert("El oficio se registro correctamente, FOLIO CONSECUTIVO:"); //// 
                         // window.open('/HIM/receta/generaReceta?&folio_receta=' + folio_receta);
                         // $('.btnguardar').attr("disabled", "disabled");
                         //  $('.btnguardar').append('<img src="../imagenes/loading.gif" width="11" height="11" alt="" />');
-
                     }
                 },
                 beforeSubmit: function () {
-
                     // $('.btnguardar').attr("disabled", "disabled");
-
-
                 }
             });
+
+            $('.docama_8585').bind('click', function () {
+                var idhosp = $(this).attr('data');
+                $('.titlea').html('Agregar folder');
+                $('.modaledit_cont').load('wnewfolder.jsp?valor=' + idhosp);
+                $('#exampleModal').modal('show');
+            });
+
+
+
+
 
 
         </script>
