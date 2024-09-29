@@ -16,6 +16,9 @@
         <link rel="shortcut icon" href="../images/himfg-logo_ewzx59.webp">  
         <%=global.cFunciones.setHeadHtml(request)%> 
     </head>
+    <script type="text/javascript">
+        var vflagclose = 0;
+    </script>
     <style>
         .ioficio{
             display: inline;
@@ -49,12 +52,21 @@
             <div class="row ">
                 <div class="row justify-content-center text-center">
                     <div class="col-12 text-center mb-5">
-                        <small class="small-text">CONTROL DE OFICIOS (llegan)</small>   <br>
+                        <small class="small-text">CONTROL DE OFICIOS (Recepción)</small>   <br>
                         <small class="small-text" style=" font-size: 15px;">DIRECCIÓN MÉDICA</small><br>
                     </div>
                 </div>               
             </div>
-            <form id="frm_RegOficio" method="POST" class="formulario"  action="../of/recibeOficios">  
+            <form id="frm_RegOficio" method="POST" class="formulario"  action="../of/recibeOficios"> 
+                <sql:query var="conactualdate" dataSource="jdbc/MEDICA">
+                    select 
+                    DATE_FORMAT(now(), '%d/%m/%Y 00:00') as fechaactual
+                    , DATE_FORMAT( DATE_ADD(now(), interval -1 month), '%d/%m/%Y 00:00') as fmenos1m
+                    , DATE_FORMAT( DATE_ADD(now(), interval +1 month), '%d/%m/%Y 00:00') as fmaslm
+                </sql:query>
+                <c:set var="fechaactual" value="${conactualdate.rows[0].fechaactual}"/>     
+                <c:set var="fmenos1m" value="${conactualdate.rows[0].fmenos1m}"/>     
+                <c:set var="fmaslm" value="${conactualdate.rows[0].fmaslm}"/>     
                 <div class="form-group col-md">
                     <div class="form-check">
                         <label>S/N</label>
@@ -88,11 +100,21 @@
                         </select>                     
                     </div>
                 </div>
-                <div id="divnumof_sin" class="divnumof_sin"  style="display: none"> 
-                    <div class="form-group col-md">
-                        <b> No. de referencia:</b>
-                        <input type="text" class="form-control ireferencia input-b " id="iotro_numof" name="iotro_numof" placeholder="# de referencia" maxlength="38">  
+                <div id="divnumof_sin" class="form-group row divnumof_sin"  style="display: none"> 
 
+                    <div class="form-group col-md-4">
+                        <b> &nbsp;</b>
+                        <div class="form-check">
+                            <label>Se envió por correo</label>
+                            <input class="form-check-input" type="checkbox" value="" id="chk-correo" name="chk-correo">                           
+                        </div> 
+                    </div>
+                    <div class="form-group col-md-4">
+                        <b> No. de referencia:</b>
+                        <svg data-toggle="tooltip" data-placement="right" title="Para los correos recibidos se generará un núm de referencia consecutivo" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
+                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
+                        </svg>
+                        <input type="text" class="form-control ireferencia input-b " id="iotro_numof" name="iotro_numof" placeholder="# de referencia" maxlength="38">  
                     </div>
                 </div>
                 <div class="form-group row">
@@ -135,13 +157,17 @@
                 <div id="depto_cn">
                     <div class="form-group row">
                         <div class="col-md-6">
-                            <label for="dep_remitente">Departamento:</label>
+                            <label for="dep_remitente">Departamento: 
+                                <svg data-toggle="tooltip" data-placement="right" title="Seleccione el departamento en el número de oficio" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
+                                </svg>
+                            </label>
                             <input type="text" class="form-control input-b" id="dep_remitente" name="dep_remitente"  readonly style=" background: #FFFFFF;   border-style: dashed; cursor: default; font-weight:bold;  text-align: center; ">
                         </div>
                         <div class="col-md-6">
                             <label for="inomrem">Nombre del remitente:</label>                      
                             <div id="divcboremitente">
-                                <select style="" name="" id=""  class="form-select input-b" data-live-search="false" style="" style="">
+                                <select style="" name="" id=""  class="form-select input-b disabled" data-live-search="false" style="" style="">
                                     <option value="0">Seleccione...</option>                           
                                 </select>
                             </div>
@@ -180,7 +206,7 @@
                     <div class="col-md-6">
                         <label for="icbocodigo_arch">Clasificación:</label>                      
                         <select id="cbocodigo_arch" name="cbocodigo_arch" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
-                            <option value="0" selected >Clasif.</option>
+                            <option value="0" selected >Seleccione...</option>
                             <sql:query var="qcodigoar" dataSource="jdbc/MEDICA">
                                 select codigo, cdescripcion from of_ctl_archiv_p 
                                 order by id
@@ -191,29 +217,25 @@
                         </select>
                     </div> 
                     <div class="col-md-6">
-                        <div id="divcbosubcod">
-
+                        <div id="divcbosubcod"> 
+                            <!--diana diana-->
+                            <label for="icbosubcodigo_arch">Sub-Clasificación:</label> 
+                            <select id="cbosubcodigo_arch" name="cbosubcodigo_arch" disabled="true" class="selectpicker form-control"  data-show-subtext="true" data-live-search="false" >                            
+                                <option value="0" selected >Sub-Clasif.</option>            
+                            </select>
                         </div>
                     </div>                    
                 </div>
                 <div class="form-group row">
                     <div class="col-md-6">
                         <div id="divcbocarpeta">
-
+                            <label for="icbosubcodigo_arch">Carpeta:</label> 
+                            <select id="cbocarpeta_arch" name="cbocarpeta_arch" disabled="true" class="selectpicker form-control" data-live-search="false" >                            
+                                <option value="0" selected >Seleccione...</option>                               
+                            </select>
                         </div>
                     </div> 
                     <div class="col-md-6">
-
-
-                        <!--                                              <div class="btn-group dropleft btndropests" style="float: right" id="lola2" >
-                                                    <a class="docama_8585 ?>" data="555>"><span class="dropdown-item pointerc" >
-                                                            <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-pencil-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                                                            </svg> ADD Nuevo folder
-                                                        </span>
-                                                    </a>
-                                                </div>-->
 
                     </div>                    
                 </div>
@@ -305,9 +327,7 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
                 <div class="form-group row">
                     <div class="col-md-6">
                         <label for="icbonomrec">Turnado a:</label>
@@ -325,19 +345,7 @@
                     <div class="col-md-6">
                         <label for="ifecha_limresp">Fecha limite de respuesta:</label>
                         <input type="text" class="form-control input-b" id="ifecha_limresp" name="ifecha_limresp" placeholder="Fecha limite de respuesta" readonly>
-                    </div>
-                    <!--                    <div class="col-md-3">
-                                            <label for="icbonomrec">Nombre de quien recibe:</label>
-                                            <select id="cboperdm" name="cboperdm" class="form-select input-b" data-live-search="true">                            
-                                                <option value="-1">Seleccione...</option>
-                    <sql:query var="qperdm" dataSource="jdbc/MEDICA">
-                        select id, cdescripcion from of_ctl_personal_dm order by cdescripcion asc
-                    </sql:query>
-                    <c:forEach var="perdm" begin="0" items="${qperdm.rowsByIndex}">
-                        <option data-subtext="${perdm[1]}" value="${perdm[0]}">${perdm[1]}</option>
-                    </c:forEach>
-                </select>
-            </div>      -->
+                    </div>                 
                 </div>
                 <div class="form-group row">
                     <div class="col-md-10 "></div>
@@ -345,24 +353,17 @@
                         <input type="submit" class="btn btn-primary" type="submit" value="Guardar">
                     </div>
                 </div>
-
                 <br> <br> <br> <br> <br>
-
-
-
             </form>
         </div>
-
-
-
         <script type="text/javascript">
             $(function () {
                 jQuery.datetimepicker.setLocale('es');
                 $('#ifecharecep').datetimepicker({
                     format: 'd/m/Y H:i',
                     language: 'es'
-                            //, minDate: '<?php echo $fecha_actualidad2 ?>'  //fecha actual
-                            // , maxDate: '<?php echo $fecha_actualidad2 ?>' //fecha actual
+                    , minDate: '${fmenos1m}'  //fecha actual 
+                    , maxDate: '${fechaactual}' //fecha actual
                     , formatDate: 'd/m/Y H:i'
                     , autoclose: true
                     , step: 1
@@ -370,8 +371,8 @@
                 $('#ifecha_limresp').datetimepicker({
                     format: 'd/m/Y H:i',
                     language: 'es'
-                            //, minDate: '<?php echo $fecha_actualidad2 ?>'  //fecha actual
-                            // , maxDate: '<?php echo $fecha_actualidad2 ?>' //fecha actual
+                    , minDate: '${fmenos1m}'  //fecha actual fmenos1m
+                    , maxDate: '${fmaslm}' //fecha actual mas1m
                     , formatDate: 'd/m/Y H:i'
                     , autoclose: true
                     , step: 1
@@ -382,16 +383,18 @@
             $("#cbocodigo_arch").change(function () {
                 var id_cod = $(this).val();
                 var option_cod = $('option:selected', this).attr('data-subtext');
-                
                 $.post("../consultas/cboSubcodigo.jsp", {id_cod: id_cod}, function (data) {
                     $("#divcbosubcod").html(data);
                     $("#cbosubcodigo_arch").selectpicker("refresh");
-                    $('#divcbocarpeta').html('');
-                    //$("#divcbocarpeta").html(data);
+                    // $('#divcbocarpeta').html('aaaaaaaaaaaaaaaa');
                 });
-                //$('#divcbocarpeta').hide();  ///diana pruebas
+
+                $.post("../consultas/cboCarpeta.jsp", {id_subcod: 0}, function (data) { // carga cbo carpeta y deshabilitada
+                    $("#divcbocarpeta").html(data);
+                    $("#cbocarpeta_arch").unbind();
+                    $("#cbocarpeta_arch").selectpicker("refresh");
+                });
             });
-            //otra carpeta
 
 
             $("#cbodeptoremit").change(function () {
@@ -410,6 +413,7 @@
                 $("#txtasunto").val(''); //asunto
                 $("#txtobservaciones").val(''); //observaciones
             });
+
             //otro remitente
             $(document).on('change', '#cbonomremit', function () {
                 $("#iotron").val('');
@@ -421,6 +425,7 @@
                     $('.otroremitentename').hide();
                 }
             });
+
             //otro destinatario
             $(document).on('change', '#cbonomdest', function () {
                 $("#iotrondest").val('');
@@ -432,8 +437,10 @@
                     $('.otrodestinatarioname').hide();
                 }
             });
+
             $("#chk-sn").click(function () {
                 if ($('#chk-sn').prop('checked')) { //sin número de oficio 
+                    // alert("aquiiiiii sinnn ");
                     $('#divnumof').hide();
                     $('#divnumof_sin').show();
                     $('#depto_sn').show();
@@ -441,7 +448,6 @@
                     //limpia
                     $('#cbodeptoremit').selectpicker('val', '0');
                     $('#divcboremitente').load('../consultas/cboUsuarios.jsp?valor=0');
-                    //  alert(a)
                     $("#iconsecutivo").val(''); //num de oficio
                     $('#cboannio').selectpicker('val', '0'); //año                
                     $('.otroremitentename').hide();
@@ -450,14 +456,39 @@
                     $("#dep_remitente_sn").val(''); //depto sin num de oficio
                     $("#nom_remitente_sn").val(''); //nom sin num de oficio
                     $('#dep_remitente').val('');
+
+
+                    // SE ENVIO POR CORREO 
+                    $("#chk-correo").click(function () {
+                        if ($('#chk-correo').prop('checked')) {
+                            $('#iotro_numof').val("${fechaactual}");
+                            $('#iotro_numof').attr('disabled', true);
+                            $("#iotro_numof").attr("style", "background: rgba(2, 104, 124, .1) !important;");
+                        } else {
+                            $('#iotro_numof').val('');
+                            $('#iotro_numof').attr('disabled', false);
+                            $("#iotro_numof").removeAttr("style");
+                        }
+                    });
+
+
                 } else {
+                    //alert("aquiiiiii coooon ");
                     $('#divnumof').show();
                     $('#depto_cn').show();
                     $('#divnumof_sin').hide();
                     $('#depto_sn').hide();
                     $("#iotro_numof").val('');
+                    $('#chk-correo').prop('checked', false);
+                    $('#iotro_numof').attr('disabled', false);
+                    $("#iotro_numof").removeAttr("style");
                 }
             });
+
+
+
+
+
             //CC
             $('#chk-cc').click(function () {
                 $('.otrodestinatarioname').hide();
@@ -482,13 +513,15 @@
             //Departamentop
             $("#cbodepto_dest").change(function () {
                 var id = $(this).val();
-                //alert(id);
                 $('#divcbodestinatario').load('../consultas/cboUsuariosdest.jsp?valor=' + id);
                 $("#iotrondest").val('');
                 $("#iotroap1dest").val('');
                 $("#iotroap2dest").val('');
                 $('.otrodestinatarioname').hide();
             });
+
+
+
             $('#frm_RegOficio').ajaxForm({
                 success: function (data) {
                     // alert("aquiiiiiiiiii");
@@ -511,14 +544,22 @@
                 }
             });
 
-            $('.docama_8585').bind('click', function () {
-                var idhosp = $(this).attr('data');
-                $('.titlea').html('Agregar folder');
-                $('.modaledit_cont').load('wnewfolder.jsp?valor=' + idhosp);
-                $('#exampleModal').modal('show');
+
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
             });
 
+            const myModalEl = document.getElementById('exampleModal')
+            myModalEl.addEventListener('hidden.bs.modal', event => {
+                if (vflagclose === 0) {
+                    $('#cbocarpeta_arch').selectpicker('val', 0);
+                    $("#cbocarpeta_arch").selectpicker("refresh");
+                } else {
+                    vflagclose = 0;
+                }
 
+
+            })
 
 
 

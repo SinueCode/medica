@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -55,20 +56,91 @@ public class recibeOficios extends HttpServlet {
         Map map = new HashMap();
         map.put("done", 0);
         Connection connx = dataSource.getConnection();
-        Connection connx2 = dataSource.getConnection();
-        Connection connx3 = dataSource.getConnection();
-
         HttpSession session = request.getSession();
-
         Statement statement = connx.createStatement();
         ResultSet resultSet = null;
+        PreparedStatement pstmt = null;
         try {
             boolean valida = true;
+            String query = "";
             String mensaje = "";
             String elemento = "";
+            int id_dep_rem = 0;
+            int num_of = 0;
+            int annio_of = 0;
+            int nom_remit = 0;
 
+            String nombre_of = "";
+            String ap1_of = "";
+            String ap2_of = "";
+            String num_ref = "";
+            String txt_dep_rem = "";
+            String txt_nom_rem = "";
+            String id_depto_destin = "";
+            String nombredest_of = "";
+            String ap1dest_of = "";
+            String ap2dest_of = "";
+            String snf = "";
+            String correo = "";
+            String cc = "";
+            String fecharecep = "";
+            String fechalimite = "";
             //****************************** DESTINATARIO *******************************************
-            if (request.getParameter("chk-sn") == null) { //TIENE NÚMERO DE OFICIO 
+            if (request.getParameter("chk-correo") == null) {
+                correo = "0";
+            } else {
+                correo = "1";
+            }
+            if (request.getParameter("chk-sn") == null) {
+                num_ref = request.getParameter("iotro_numof");
+                snf = "0";
+
+                if (request.getParameter("cbodeptoremit") == null || request.getParameter("cbodeptoremit").trim().equals("")) {
+                    id_dep_rem = 0;
+                } else {
+                    id_dep_rem = Integer.parseInt(request.getParameter("cbodeptoremit"));
+                }
+                if (request.getParameter("iconsecutivo") == null || request.getParameter("iconsecutivo").trim().equals("")) {
+                    num_of = 0;
+                } else {
+                    num_of = Integer.parseInt(request.getParameter("iconsecutivo"));
+                }
+                if (request.getParameter("cboannio") == null || request.getParameter("cboannio").trim().equals("")) {
+                    annio_of = 0;
+                } else {
+                    annio_of = Integer.parseInt(request.getParameter("cboannio"));
+                }
+                if (request.getParameter("cbonomremit") == null || request.getParameter("cbonomremit").trim().equals("")) {
+                    nom_remit = 0;
+                } else {
+                    nom_remit = Integer.parseInt(request.getParameter("cbonomremit"));
+                }
+
+                txt_dep_rem = "";
+                txt_nom_rem = "";
+            } else {
+                num_ref = "xsdfsd";
+                snf = "1";
+                id_dep_rem = 0;
+                num_of = 0;
+                annio_of = 0;
+                nom_remit = 0;
+
+                txt_dep_rem = request.getParameter("dep_remitente_sn");
+                txt_nom_rem = request.getParameter("nom_remitente_sn");
+            }
+
+            if (request.getParameter("chk-cc") == null) { //PARA DIR MÉDICA
+                cc = "0";
+                id_depto_destin = request.getParameter("cbodepto_destm");
+            } else {
+                cc = "1";
+                id_depto_destin = request.getParameter("cbodepto_dest");
+            }
+            fecharecep = global.cFunciones.f131_to_126(request.getParameter("ifecharecep").trim());
+            fechalimite = global.cFunciones.f131_to_126(request.getParameter("ifecha_limresp").trim());
+//****************************** DESTINATARIO *******************************************
+            if (request.getParameter("chk-sn") == null) {  //TIENE NÚMERO DE OFICIO   
                 if (valida) {
                     resultSet = null;
                     resultSet = statement.executeQuery(" select clave from ctl_departamentos  where clave != 2000 and clave = " + request.getParameter("cbodeptoremit") + "");
@@ -97,8 +169,11 @@ public class recibeOficios extends HttpServlet {
                     resultSet = null;
                     resultSet = statement.executeQuery("SELECT id  FROM of_usr_oficios  WHERE id = " + request.getParameter("cbonomremit") + "");
                     if (resultSet.next()) {
-                       // System.out.println("valor---->" + resultSet.getString(1));
-                        if (resultSet.getString(1).equals("3")) { //otro remitente                          
+                        if (resultSet.getString(1).equals("3")) { //otro remitente 
+//                            nombre_of = request.getParameter("iotron");
+//                            ap1_of = request.getParameter("iotroap1");
+//                            ap2_of = request.getParameter("iotroap2");
+
                             if (valida) {
                                 if (request.getParameter("iotron") == null || request.getParameter("iotron").trim().equals("")) {
                                     valida = false;
@@ -120,9 +195,11 @@ public class recibeOficios extends HttpServlet {
                                     elemento = "iotroap2";
                                 }
                             }
-
+                        } else {
+//                            nombre_of = "";
+//                            ap1_of = "";
+//                            ap2_of = "";
                         }
-
                     } else {
                         valida = false;
                         mensaje = "Seleccione remitente.";
@@ -132,7 +209,6 @@ public class recibeOficios extends HttpServlet {
 
             } else { //SIN NÚMERO DE OFICIO   
                 if (valida) {
-                    System.out.println(request.getParameter("iotro_numof"));
                     if (request.getParameter("iotro_numof") == null || request.getParameter("iotro_numof").trim().equals("")) {
                         valida = false;
                         mensaje = "Escriba una referenca para el oficio";
@@ -140,25 +216,20 @@ public class recibeOficios extends HttpServlet {
                     }
                 }
                 if (valida) {
-                    //System.out.println(request.getParameter("dep_remitente_sn"));
                     if (request.getParameter("dep_remitente_sn") == null || request.getParameter("dep_remitente_sn").trim().equals("")) {
                         valida = false;
                         mensaje = "Escriba el deparatamento del remitente";
                         elemento = "dep_remitente_sn";
                     }
                 }
-
                 if (valida) {
-                    //System.out.println(request.getParameter("nom_remitente_sn"));
                     if (request.getParameter("nom_remitente_sn") == null || request.getParameter("nom_remitente_sn").trim().equals("")) {
                         valida = false;
                         mensaje = "Escriba el nombre del remitente";
                         elemento = "nom_remitente_sn";
                     }
                 }
-
             }
-
             if (valida) {
                 if (request.getParameter("ifecharecep") == null || request.getParameter("ifecharecep").trim().equals("")) {
                     valida = false;
@@ -166,13 +237,26 @@ public class recibeOficios extends HttpServlet {
                     elemento = "ifecharecep";
                 }
             }
-//            if (valida) {
-//                if (!global.cFunciones.validateFechah(connx2, request.getParameter("ifecharecep").trim())) {
-//                    valida = false;
-//                    mensaje = "Fecha de recepción no válida.";
-//                    elemento = "ifecharecep";
-//                }
-//            }
+            if (valida) {
+                if (!global.cFunciones.validateFechah(connx, request.getParameter("ifecharecep").trim())) {
+                    valida = false;
+                    mensaje = "Fecha de recepción no válida.";
+                    elemento = "ifecharecep";
+                }
+            }
+
+            if (valida) {
+                resultSet = null;               
+               
+                resultSet = statement.executeQuery("SELECT 1  where ('" + fecharecep + "') <=  DATE_FORMAT(now(), '%Y-%m-%d 00:00')");
+                if (resultSet.next()) {
+
+                } else {
+                    valida = false;
+                    mensaje = "La fecha de recepción de oficio no puede ser mayor al día actual, verifique .";
+                    elemento = "ifecharecep";
+                }
+            }
 
             if (valida) {
                 resultSet = null;
@@ -184,7 +268,6 @@ public class recibeOficios extends HttpServlet {
                     elemento = "cboperdm";
                 }
             }
-
             if (valida) {
                 resultSet = null;
                 resultSet = statement.executeQuery("select codigo, cdescripcion from of_ctl_archiv_p where codigo = '" + request.getParameter("cbocodigo_arch") + "'");
@@ -195,7 +278,6 @@ public class recibeOficios extends HttpServlet {
                     elemento = "cbocodigo_arch";
                 }
             }
-
             if (valida) {
                 resultSet = null;
                 resultSet = statement.executeQuery("select sub_codigo, cdescripcion from of_ctl_archiv_det where sub_codigo = '" + request.getParameter("cbosubcodigo_arch") + "' and codigo = '" + request.getParameter("cbocodigo_arch") + "'");
@@ -206,14 +288,24 @@ public class recibeOficios extends HttpServlet {
                     elemento = "cbosubcodigo_arch";
                 }
             }
+            if (valida) {
+                resultSet = null;
+                resultSet = statement.executeQuery("select id_carpeta, cdescripcion from of_ctl_archiv_carpeta where id_carpeta = '" + request.getParameter("cbocarpeta_arch") + "' ");
+                if (resultSet.next()) {
+                } else {
+                    valida = false;
+                    mensaje = "Seleccione la carpeta.";
+                    elemento = "cbocarpeta_arch";
+                }
+            }
 
             if (valida) {
                 if (request.getParameter("txtasunto").trim().equals("")) {
-                   // if (global.cFunciones.charespecial(request.getParameter("txtasunto")).length() > 15000) {
-                        valida = false;
-                        mensaje = "Especifique el asunto";
-                        elemento = "txtasunto";
-                   // }
+                    // if (global.cFunciones.charespecial(request.getParameter("txtasunto")).length() > 15000) {
+                    valida = false;
+                    mensaje = "Especifique el asunto";
+                    elemento = "txtasunto";
+                    // }
                 }
             }
             if (valida) {
@@ -227,9 +319,7 @@ public class recibeOficios extends HttpServlet {
             }
 
             //****************************** DESTINATARIO *******************************************
-             
             if (request.getParameter("chk-cc") == null) { //PARA DIR MÉDICA
-               // System.out.print("aaaaaaaaaa");
                 if (valida) {
                     resultSet = null;
                     resultSet = statement.executeQuery("select clave, cdescripcion from ctl_departamentos  where clave = " + request.getParameter("cbodepto_destm") + "");
@@ -241,7 +331,6 @@ public class recibeOficios extends HttpServlet {
                     }
                 }
             } else { // CON  COPIA
-                //System.out.print("bbbbbbbbbbbbbbb");
                 if (valida) {
                     resultSet = null;
                     resultSet = statement.executeQuery("select clave, cdescripcion from ctl_departamentos  where clave = " + request.getParameter("cbodepto_dest") + "");
@@ -254,11 +343,14 @@ public class recibeOficios extends HttpServlet {
                 }
             }
 
-            if (valida) { // cbonomdest   iotrondest  iotroap1dest  iotroap2dest
+            if (valida) { //  iotrondest  iotroap1dest  iotroap2dest
                 resultSet = null;
                 resultSet = statement.executeQuery("SELECT id  FROM of_usr_oficios  WHERE id = " + request.getParameter("cbonomdest") + "");
                 if (resultSet.next()) {
-                    if (resultSet.getString(1).equals("3")) { //otro destinatario                          
+                    if (resultSet.getString(1).equals("3")) { //otro destinatario     
+//                        nombredest_of = request.getParameter("iotrondest");
+//                        ap1dest_of = request.getParameter("iotroap1dest");
+//                        ap2dest_of = request.getParameter("iotroap2dest");
                         if (valida) {
                             if (request.getParameter("iotrondest") == null || request.getParameter("iotrondest").trim().equals("")) {
                                 valida = false;
@@ -281,6 +373,10 @@ public class recibeOficios extends HttpServlet {
                             }
                         }
 
+                    } else {
+//                        nombredest_of = "";
+//                        ap1dest_of = "";
+//                        ap2dest_of = "";
                     }
 
                 } else {
@@ -309,19 +405,70 @@ public class recibeOficios extends HttpServlet {
                     elemento = "ifecha_limresp";
                 }
             }
-//            if (valida) {
-//                if (!global.cFunciones.validateFechah(connx3, request.getParameter("ifecha_limresp").trim())) {
-//                    valida = false;
-//                    mensaje = "Fecha limite de respuesta no válida.";
-//                    elemento = "ifecha_limresp";
-//                }
-//            }
+            if (valida) {
+                if (!global.cFunciones.validateFechah(connx, request.getParameter("ifecha_limresp").trim())) {
+                    valida = false;
+                    mensaje = "Fecha limite de respuesta no válida.";
+                    elemento = "ifecha_limresp";
+                }
+                //  fechalimite = global.cFunciones.f131_to_126(request.getParameter("ifecha_limresp").trim());
+            }
+
+            if (valida) {
+                resultSet = null;        
+              //  System.out.println("SELECT 1  where ('" + fechalimite + "') >= ('"+ fechalimite+ "' )");
+                resultSet = statement.executeQuery("SELECT 1  where ('" + fechalimite + "') >= ('"+ fecharecep+ "' )");
+                if (resultSet.next()) {
+
+                } else {
+                    valida = false;
+                    mensaje = "La fecha límite de respuesta debe se mayor a la fecha de recepción de oficio, verifique .";
+                    elemento = "ifecha_limresp";
+                }
+            }
 
             if (!valida) {
                 map.put("done", 0);
                 map.put("mensaje", mensaje);
                 map.put("elemento", elemento);
             } else {
+
+                query = ("  INSERT INTO of_recepcion ( sn, id_dpto_remit, num_of, annio"
+                        + " , correo, num_referencia, fecha_recepcion, id_personal_recibe"
+                        + " , id_nom_remitente"
+                        + ",nom_remitente_txt,dpto_remitente_txt"
+                        + " , id_clasif, id_sub_clasif, id_carpeta"
+                        + ", asunto, observaciones , cc "
+                        + " , id_dpto_destinat, id_nom_destinat,id_depto_turnadoa "
+                        + " , fecha_limiter, id_alta_ausuario,fecha_alta) VALUES"
+                        + " ( " + snf + " "
+                        + " ," + id_dep_rem + ""
+                        + " ," + num_of + " "
+                        + " ," + annio_of + ""
+                        + " , " + correo + " "
+                        + " , '" + request.getParameter("iotro_numof") + "'"
+                        + " , '" + fecharecep + "'"
+                        + " , " + request.getParameter("cboperdm") + ""
+                        + " , " + nom_remit + ""
+                        + " , '" + txt_nom_rem + "'"
+                        + " , '" + txt_dep_rem + "'"
+                        + " , '" + request.getParameter("cbocodigo_arch") + "'"
+                        + " , '" + request.getParameter("cbosubcodigo_arch") + "'"
+                        + " , " + request.getParameter("cbocarpeta_arch") + ""
+                        + " , '" + request.getParameter("txtasunto") + "'"
+                        + " , '" + request.getParameter("txtobservaciones") + "'"
+                        + " , " + cc + ""
+                        + " , '" + id_depto_destin + "'"
+                        + " , " + request.getParameter("cbonomdest") + ""
+                        + " , " + request.getParameter("cbodepto_tur") + ""
+                        + " , '" + fechalimite + "'"
+                        + " , " + session.getAttribute("userid") + ""
+                        + " , now() "
+                        + " )  ");
+
+              //  System.out.println(query);
+                pstmt = connx.prepareStatement(query);
+                pstmt.executeUpdate();
                 map.put("done", 1);
             }
 
@@ -336,9 +483,6 @@ public class recibeOficios extends HttpServlet {
             DbUtils.closeQuietly(resultSet);
             DbUtils.closeQuietly(statement);
             DbUtils.closeQuietly(connx);
-
-            DbUtils.closeQuietly(connx2);
-            DbUtils.closeQuietly(connx3);
             out.close();
         }
     }

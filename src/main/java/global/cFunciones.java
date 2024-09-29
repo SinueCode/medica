@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -71,19 +72,12 @@ public class cFunciones {
                 session.setAttribute("user_mortalidad", resultSet.getString("p_mortalidad"));
                 session.setAttribute("user_eguardia", resultSet.getString("p_eguardia"));
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new RuntimeException("Error --> ", e);
         } finally {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-            statement.close();
-            if (connx != null) {
-                try {
-                    connx.close();
-                } catch (SQLException ignore) {
-                }
-            }
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+            DbUtils.closeQuietly(connx);
         }
 
     }
@@ -95,8 +89,8 @@ public class cFunciones {
         String a = fecha.substring(6, 10);
         String h = fecha.substring(11, 16);
         String fechanew = a + "-" + m + "-" + d + " " + h;
-       // System.out.println("fecha--->" + fechanew);
-       // System.out.println(" SELECT DATE('" + fechanew + "') as fecha");
+        // System.out.println("fecha--->" + fechanew);
+        // System.out.println(" SELECT DATE('" + fechanew + "') as fecha");
         Statement statement = connx.createStatement();
         ResultSet resultSet = null;
         boolean validar = true;
@@ -110,21 +104,35 @@ public class cFunciones {
         } catch (Exception e) {
             throw new RuntimeException("Error --> ", e);
         } finally {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-            statement.close();
-            try {
-                connx.close();
-            } catch (SQLException ignore) {
-            }
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+            DbUtils.closeQuietly(connx);
         }
 
         return validar;
     }
-    
-    
-      public static String charespecial(String s) { //sinue
+
+    public static String f131_to_126(String fecha131) {
+        //01/01/2021 06:00 <--------> 2021-01-01 06:00:00
+        //System.out.println("fecha131"+fecha131);
+        String fecha126 = "";
+        try {
+
+            String d = fecha131.substring(0, 2);
+            String m = fecha131.substring(3, 5);
+            String a = fecha131.substring(6, 10);
+            String h = fecha131.substring(11, 16);
+            fecha126 = a + "-" + m + "-" + d + " " + h;
+
+            // System.out.println("fecha126"+fecha126);
+        } catch (Exception $e) {
+
+        }
+
+        return fecha126;
+    }
+
+    public static String charespecial(String s) { //sinue
         return StringEscapeUtils.escapeSql(StringEscapeUtils.escapeHtml(s));
     }
 

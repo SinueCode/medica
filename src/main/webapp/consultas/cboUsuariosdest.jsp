@@ -3,7 +3,6 @@
     Created on : 9 sept 2024, 11:53:21
     Author     : DIR. MEDICA
 --%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     "http://www.w3.org/TR/html4/loose.dtd">
@@ -11,7 +10,6 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
 
 <%
-    // System.out.println("llega valor-->"+request.getParameter("valor"));
     if (request.getParameter("valor").equals("0")) {
 %>
 <sql:query var="consulta" dataSource="jdbc/MEDICA">
@@ -23,7 +21,6 @@
 <sql:query var="consulta" dataSource="jdbc/MEDICA">
     SELECT o.id, CONCAT(o.nombre,' ',o.apellido1, ' ',o.apellido2) as name  FROM of_usr_oficios o 
     WHERE o.ccosto= '<%=request.getParameter("valor")%>'  UNION SELECT id, nombre as name FROM of_usr_oficios WHERE ccosto=9999
-
 </sql:query>
 <%
     }

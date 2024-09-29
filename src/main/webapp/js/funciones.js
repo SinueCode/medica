@@ -17,6 +17,22 @@
     };
 }(jQuery));
 
+
+var fnmedica = {
+    initcbocarpeta: function (cod, subcod) {
+        $("#cbocarpeta_arch").change(function () {
+            if ($('#cbocarpeta_arch').val() === '999') { // + Agregar una nueva carpeta                      
+                var idhosp = $(this).attr('data');
+                $('.titlea').html('Agregar carpeta');
+                $('.modaledit_cont').load('wnewCarpeta.jsp?subcod=' + subcod + '&cod=' + cod);
+                $('#exampleModal').modal('show');
+            } else {
+                ///$('.otroremitentename').hide();
+            }
+        });
+    }
+}
+
 var Cms = {
     loadingscreen: function (txt) {
         $('.ls1').remove()
