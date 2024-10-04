@@ -28,25 +28,40 @@ public class cFunciones {
     public static String setHeadHtml(HttpServletRequest request) {
         String html = "";
         html += "<link href=\"" + request.getContextPath() + "/webjars/bootstrap/5.3.1/css/bootstrap.min.css\" rel=\"stylesheet\">";
-        //html += "<link href=\"" + request.getContextPath() + "/js/bootstrap-select-1.13.9/css/bootstrap-select.min.css\">"; //EL MENU
 
         html += "<link href=\"https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css\" rel=\"stylesheet\">";
 
         html += "<link href=\"" + request.getContextPath() + "/css/style.css\" rel=\"stylesheet\">"; //EL MENU
         html += "<link href=\"" + request.getContextPath() + "/css/styled.css\" rel=\"stylesheet\">";
         html += "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + request.getContextPath() + "/js/datepicker/bootstrap-datepicker.css\" />";
+
+        //html += "<link href=\"" + request.getContextPath() + "/js/datatable/bootstrap.min.css\" rel=\"stylesheet\">";
+        html += "<link href=\"" + request.getContextPath() + "/js/datatable/dataTables.bootstrap5.css\" rel=\"stylesheet\">";
+
         html += "<script type=\"text/javascript\" src=\"" + request.getContextPath() + "/webjars/bootstrap/5.3.1/js/bootstrap.bundle.min.js\"></script>";
         html += "<script type=\"text/javascript\" src=\"" + request.getContextPath() + "/webjars/jquery/3.7.1/jquery.min.js\"></script>";
         html += "<script src=\"https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js\"></script>";
 
         html += "<script type=\"text/javascript\" src=\"" + request.getContextPath() + "/webjars/jquery-form/4.2.2/jquery.form.min.js\"></script>";
         html += "<script type=\"text/javascript\" src=\"" + request.getContextPath() + "/js/funciones.js\"></script>";
+
         html += "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + request.getContextPath() + "/js/datetimepicker/jquery.datetimepicker.css\"/ >";
         html += "<script src=\"" + request.getContextPath() + "/js/datetimepicker/build/jquery.datetimepicker.full.min.js\"></script>";
         html += "<script type=\"text/javascript\" src=\"" + request.getContextPath() + "/js/datepicker/bootstrap-datepicker.min.js\"></script>";
         html += "<script type=\"text/javascript\" src=\"" + request.getContextPath() + "/js/datepicker/bootstrap-datepicker.es.min.js\"></script>";
-        // html += "<script type=\"text/javascript\" src=\"" + request.getContextPath() + "/js/bootstrap-select-1.13.9/js/bootstrap-select.min.js\"></script>";
+
         html += "<script type=\"text/javascript\" src=\"https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js\"></script>";
+
+        /**
+         * ***************
+         */
+        html += "<script src=\"" + request.getContextPath() + "/js/datatable/dataTables.js\"></script>";
+        html += "<script src=\"" + request.getContextPath() + "/js/datatable/dataTables.bootstrap5.js\"></script>";
+        html += "<script src=\"" + request.getContextPath() + "/js/datatable/dataTables.fixedColumns.js\"></script>";
+        html += "<script src=\"" + request.getContextPath() + "/js/datatable/fixedColumns.dataTables.js\"></script>";
+        /**
+         * ***************
+         */
 
         return html;
     }
@@ -106,7 +121,6 @@ public class cFunciones {
         } finally {
             DbUtils.closeQuietly(resultSet);
             DbUtils.closeQuietly(statement);
-            DbUtils.closeQuietly(connx);
         }
 
         return validar;
@@ -130,6 +144,48 @@ public class cFunciones {
         }
 
         return fecha126;
+    }
+
+    public static String f131_to_126_NUM(String fecha131) {
+        //01/01/2021 06:00 <--------> 2021-01-01 06:00:00
+        //System.out.println("fecha131"+fecha131);
+        String fecha126 = "";
+        try {
+
+            String d = fecha131.substring(0, 2);
+            String m = fecha131.substring(3, 5);
+            String a = fecha131.substring(6, 10);
+            String h = fecha131.substring(11, 16);
+            fecha126 = a + m + d + h.replaceAll(":", "");
+
+            // System.out.println("fecha126"+fecha126);
+        } catch (Exception $e) {
+
+        }
+
+        return fecha126;
+    }
+
+    public static String getNOWFechaDDMMYYYHHMM(Connection connx) throws NamingException, SQLException {
+//      17/08/2024 09:66 ----17-08-2024 09:66
+
+        Statement statement = connx.createStatement();
+        ResultSet resultSet = null;
+        String sfecha = "";
+        boolean validar = true;
+        try {
+            resultSet = statement.executeQuery(" select DATE_FORMAT(now(), '%Y%m%d%H%i') as fecha; ");
+            if (resultSet.next()) {
+                sfecha = resultSet.getString("fecha");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error --> ", e);
+        } finally {
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+        }
+
+        return sfecha;
     }
 
     public static String charespecial(String s) { //sinue

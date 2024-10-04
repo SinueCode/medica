@@ -9,24 +9,24 @@
     "http://www.w3.org/TR/html4/loose.dtd">
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
-<%  
+<%
     if (request.getParameter("valor").equals("0")) {
 %>
 <script type="text/javascript">
-   $('#cbonomremit').addClass('disabled'); 
+    $('#cbonomremit').addClass('disabled');
 </script> 
 <sql:query var="consulta" dataSource="jdbc/MEDICA">
     SELECT o.id, CONCAT(o.nombre,' ',o.apellido1, ' ',o.apellido2) as name  FROM of_usr_oficios o 
-    WHERE o.ccosto= '<%=request.getParameter("valor")%>'
+    WHERE o.ccosto= '<%=request.getParameter("valor")%>' and o.cstatus = 1
 </sql:query>
-<% } else {
+<% }else {
 %>
 <script type="text/javascript">
-   $('#cbonomremit').removeClass('disabled'); 
+    $('#cbonomremit').removeClass('disabled');
 </script> 
 <sql:query var="consulta" dataSource="jdbc/MEDICA">
     SELECT o.id, CONCAT(o.nombre,' ',o.apellido1, ' ',o.apellido2) as name  FROM of_usr_oficios o 
-    WHERE o.ccosto= '<%=request.getParameter("valor")%>'  UNION SELECT id, nombre as name FROM of_usr_oficios WHERE ccosto=9999
+    WHERE o.ccosto= '<%=request.getParameter("valor")%>' and o.cstatus = 1 UNION SELECT id, nombre as name FROM of_usr_oficios WHERE ccosto=9999
 </sql:query>
 <%
     }

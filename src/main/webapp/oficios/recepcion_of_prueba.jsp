@@ -1,8 +1,9 @@
 <%-- 
-    Document   : recibeof
-    Created on : 3 sept 2024, 14:49:31
+    Document   : recepcion_of
+    Created on : 3 oct 2024, 13:19:21
     Author     : DIR. MEDICA
 --%>
+
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>

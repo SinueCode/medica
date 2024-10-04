@@ -7,6 +7,7 @@ package oficios;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -63,20 +64,24 @@ public class recibeOficios extends HttpServlet {
         try {
             boolean valida = true;
             String query = "";
+            String query2 = "";
+            String query3 = "";
+
+            String qIdDest = "";
+
             String mensaje = "";
             String elemento = "";
             int id_dep_rem = 0;
             int num_of = 0;
             int annio_of = 0;
             int nom_remit = 0;
-
             String nombre_of = "";
             String ap1_of = "";
             String ap2_of = "";
             String num_ref = "";
             String txt_dep_rem = "";
             String txt_nom_rem = "";
-            String id_depto_destin = "";
+            int id_depto_destin = 0;
             String nombredest_of = "";
             String ap1dest_of = "";
             String ap2dest_of = "";
@@ -85,7 +90,12 @@ public class recibeOficios extends HttpServlet {
             String cc = "";
             String fecharecep = "";
             String fechalimite = "";
+            String fecharecepf = "";
+            String fechalimitef = "";
+            int nom_destinatario = 0;            
+            int id_oficio = 0;
             //****************************** DESTINATARIO *******************************************
+
             if (request.getParameter("chk-correo") == null) {
                 correo = "0";
             } else {
@@ -94,7 +104,6 @@ public class recibeOficios extends HttpServlet {
             if (request.getParameter("chk-sn") == null) {
                 num_ref = request.getParameter("iotro_numof");
                 snf = "0";
-
                 if (request.getParameter("cbodeptoremit") == null || request.getParameter("cbodeptoremit").trim().equals("")) {
                     id_dep_rem = 0;
                 } else {
@@ -115,30 +124,26 @@ public class recibeOficios extends HttpServlet {
                 } else {
                     nom_remit = Integer.parseInt(request.getParameter("cbonomremit"));
                 }
-
                 txt_dep_rem = "";
                 txt_nom_rem = "";
             } else {
-                num_ref = "xsdfsd";
+                num_ref = "";
                 snf = "1";
                 id_dep_rem = 0;
                 num_of = 0;
                 annio_of = 0;
                 nom_remit = 0;
-
                 txt_dep_rem = request.getParameter("dep_remitente_sn");
                 txt_nom_rem = request.getParameter("nom_remitente_sn");
             }
-
             if (request.getParameter("chk-cc") == null) { //PARA DIR MÉDICA
                 cc = "0";
-                id_depto_destin = request.getParameter("cbodepto_destm");
+                id_depto_destin = Integer.parseInt(request.getParameter("cbodepto_destm"));
             } else {
                 cc = "1";
-                id_depto_destin = request.getParameter("cbodepto_dest");
+                id_depto_destin = Integer.parseInt(request.getParameter("cbodepto_dest"));
             }
-            fecharecep = global.cFunciones.f131_to_126(request.getParameter("ifecharecep").trim());
-            fechalimite = global.cFunciones.f131_to_126(request.getParameter("ifecha_limresp").trim());
+
 //****************************** DESTINATARIO *******************************************
             if (request.getParameter("chk-sn") == null) {  //TIENE NÚMERO DE OFICIO   
                 if (valida) {
@@ -170,9 +175,9 @@ public class recibeOficios extends HttpServlet {
                     resultSet = statement.executeQuery("SELECT id  FROM of_usr_oficios  WHERE id = " + request.getParameter("cbonomremit") + "");
                     if (resultSet.next()) {
                         if (resultSet.getString(1).equals("3")) { //otro remitente 
-//                            nombre_of = request.getParameter("iotron");
-//                            ap1_of = request.getParameter("iotroap1");
-//                            ap2_of = request.getParameter("iotroap2");
+                            nombre_of = request.getParameter("iotron");
+                            ap1_of = request.getParameter("iotroap1");
+                            ap2_of = request.getParameter("iotroap2");
 
                             if (valida) {
                                 if (request.getParameter("iotron") == null || request.getParameter("iotron").trim().equals("")) {
@@ -196,9 +201,9 @@ public class recibeOficios extends HttpServlet {
                                 }
                             }
                         } else {
-//                            nombre_of = "";
-//                            ap1_of = "";
-//                            ap2_of = "";
+                            nombre_of = "";
+                            ap1_of = "";
+                            ap2_of = "";
                         }
                     } else {
                         valida = false;
@@ -245,16 +250,20 @@ public class recibeOficios extends HttpServlet {
                 }
             }
 
+            ///SE VALIDA LA FECHA DE RECEPCION sea menor o igual a la fecha actual          
+            fecharecep = global.cFunciones.f131_to_126_NUM(request.getParameter("ifecharecep").trim());
+            fechalimite = global.cFunciones.f131_to_126_NUM(request.getParameter("ifecha_limresp").trim());
             if (valida) {
-                resultSet = null;               
-               
-                resultSet = statement.executeQuery("SELECT 1  where ('" + fecharecep + "') <=  DATE_FORMAT(now(), '%Y-%m-%d 00:00')");
-                if (resultSet.next()) {
-
-                } else {
-                    valida = false;
-                    mensaje = "La fecha de recepción de oficio no puede ser mayor al día actual, verifique .";
-                    elemento = "ifecharecep";
+                BigInteger biFechaRec = new BigInteger(fecharecep);
+                BigInteger biFechaActual = new BigInteger(global.cFunciones.getNOWFechaDDMMYYYHHMM(connx));
+                switch (biFechaRec.compareTo(biFechaActual)) {
+                    case 1: //si es 1 quiere decir que el numero 1 osea biFechaRec es mayor que biFechaActual
+                        valida = false;
+                        mensaje = "La fecha de recepción de oficio no puede ser mayor al día actual, verifique .";
+                        elemento = "ifecharecep";
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -298,7 +307,6 @@ public class recibeOficios extends HttpServlet {
                     elemento = "cbocarpeta_arch";
                 }
             }
-
             if (valida) {
                 if (request.getParameter("txtasunto").trim().equals("")) {
                     // if (global.cFunciones.charespecial(request.getParameter("txtasunto")).length() > 15000) {
@@ -309,6 +317,14 @@ public class recibeOficios extends HttpServlet {
                 }
             }
             if (valida) {
+                if (global.cFunciones.charespecial(request.getParameter("txtasunto")).length() > 15000) {
+                    valida = false;
+                    mensaje = "El asunto es muy extenso, sea más breve";
+                    elemento = "txtasunto";
+                }
+            }
+
+            if (valida) {
                 if (!request.getParameter("txtobservaciones").trim().equals("")) {
                     if (global.cFunciones.charespecial(request.getParameter("txtobservaciones")).length() > 15000) {
                         valida = false;
@@ -317,7 +333,6 @@ public class recibeOficios extends HttpServlet {
                     }
                 }
             }
-
             //****************************** DESTINATARIO *******************************************
             if (request.getParameter("chk-cc") == null) { //PARA DIR MÉDICA
                 if (valida) {
@@ -330,7 +345,7 @@ public class recibeOficios extends HttpServlet {
                         elemento = "cbodepto_destm";
                     }
                 }
-            } else { // CON  COPIA
+            } else { // CON COPIA
                 if (valida) {
                     resultSet = null;
                     resultSet = statement.executeQuery("select clave, cdescripcion from ctl_departamentos  where clave = " + request.getParameter("cbodepto_dest") + "");
@@ -347,10 +362,11 @@ public class recibeOficios extends HttpServlet {
                 resultSet = null;
                 resultSet = statement.executeQuery("SELECT id  FROM of_usr_oficios  WHERE id = " + request.getParameter("cbonomdest") + "");
                 if (resultSet.next()) {
-                    if (resultSet.getString(1).equals("3")) { //otro destinatario     
-//                        nombredest_of = request.getParameter("iotrondest");
-//                        ap1dest_of = request.getParameter("iotroap1dest");
-//                        ap2dest_of = request.getParameter("iotroap2dest");
+                    if (resultSet.getString(1).equals("3")) { //otro destinatario   
+
+                        nombredest_of = request.getParameter("iotrondest");
+                        ap1dest_of = request.getParameter("iotroap1dest");
+                        ap2dest_of = request.getParameter("iotroap2dest");
                         if (valida) {
                             if (request.getParameter("iotrondest") == null || request.getParameter("iotrondest").trim().equals("")) {
                                 valida = false;
@@ -372,11 +388,8 @@ public class recibeOficios extends HttpServlet {
                                 elemento = "iotroap2dest";
                             }
                         }
-
                     } else {
-//                        nombredest_of = "";
-//                        ap1dest_of = "";
-//                        ap2dest_of = "";
+
                     }
 
                 } else {
@@ -396,7 +409,6 @@ public class recibeOficios extends HttpServlet {
                     elemento = "cbodepto_tur";
                 }
             }
-
             //ifecha_limresp
             if (valida) {
                 if (request.getParameter("ifecha_limresp") == null || request.getParameter("ifecha_limresp").trim().equals("")) {
@@ -411,29 +423,62 @@ public class recibeOficios extends HttpServlet {
                     mensaje = "Fecha limite de respuesta no válida.";
                     elemento = "ifecha_limresp";
                 }
-                //  fechalimite = global.cFunciones.f131_to_126(request.getParameter("ifecha_limresp").trim());
             }
 
             if (valida) {
-                resultSet = null;        
-              //  System.out.println("SELECT 1  where ('" + fechalimite + "') >= ('"+ fechalimite+ "' )");
-                resultSet = statement.executeQuery("SELECT 1  where ('" + fechalimite + "') >= ('"+ fecharecep+ "' )");
+                resultSet = null;
+                resultSet = statement.executeQuery("SELECT 1  where ('" + fechalimite + "') >= ('" + fecharecep + "' )");
                 if (resultSet.next()) {
-
                 } else {
                     valida = false;
                     mensaje = "La fecha límite de respuesta debe se mayor a la fecha de recepción de oficio, verifique .";
                     elemento = "ifecha_limresp";
                 }
             }
-
             if (!valida) {
                 map.put("done", 0);
                 map.put("mensaje", mensaje);
                 map.put("elemento", elemento);
             } else {
+                fecharecepf = global.cFunciones.f131_to_126(request.getParameter("ifecharecep").trim());
+                fechalimitef = global.cFunciones.f131_to_126(request.getParameter("ifecha_limresp").trim());
+                nom_destinatario = Integer.parseInt(request.getParameter("cbonomdest"));
 
-                query = ("  INSERT INTO of_recepcion ( sn, id_dpto_remit, num_of, annio"
+                if (nom_remit == 3) { //otro nombre de remitente
+                    query2 = (" INSERT INTO of_usr_oficios ( nombre, apellido1, apellido2, ccosto , cstatus) VALUES "
+                            + " ( '" + nombre_of + "' "
+                            + " , '" + ap1_of + "'"
+                            + " , '" + ap2_of + "'"
+                            + " , " + id_dep_rem + " "
+                            + " , 1 "
+                            + " ) ");
+                    //System.out.println(query2);
+                    pstmt = connx.prepareStatement(query2);
+                    pstmt.executeUpdate();
+                    resultSet = null;
+                    resultSet = statement.executeQuery(" SELECT @@IDENTITY ");
+                    if (resultSet.next()) {
+                        nom_remit = resultSet.getInt(1);
+                    }
+                }
+                if (request.getParameter("cbonomdest").equals("3")) {  //otro nombre de destinatario
+                    query3 = (" INSERT INTO of_usr_oficios ( nombre, apellido1, apellido2, ccosto , cstatus) VALUES "
+                            + " ( '" + nombredest_of + "' "
+                            + " , '" + ap1dest_of + "' "
+                            + " , '" + ap2dest_of + "'"
+                            + " , " + id_depto_destin + " "
+                            + " , 1 "
+                            + " ) ");
+                    //System.out.println(query3);
+                    pstmt = connx.prepareStatement(query3);
+                    pstmt.executeUpdate();
+                    resultSet = null;
+                    resultSet = statement.executeQuery(" SELECT @@IDENTITY ");
+                    if (resultSet.next()) {
+                        nom_destinatario = resultSet.getInt(1);
+                    }
+                }
+                query = (" INSERT INTO of_recepcion ( sn, id_dpto_remit, num_of, annio"
                         + " , correo, num_referencia, fecha_recepcion, id_personal_recibe"
                         + " , id_nom_remitente"
                         + ",nom_remitente_txt,dpto_remitente_txt"
@@ -447,7 +492,7 @@ public class recibeOficios extends HttpServlet {
                         + " ," + annio_of + ""
                         + " , " + correo + " "
                         + " , '" + request.getParameter("iotro_numof") + "'"
-                        + " , '" + fecharecep + "'"
+                        + " , '" + fecharecepf + "'"
                         + " , " + request.getParameter("cboperdm") + ""
                         + " , " + nom_remit + ""
                         + " , '" + txt_nom_rem + "'"
@@ -458,17 +503,22 @@ public class recibeOficios extends HttpServlet {
                         + " , '" + request.getParameter("txtasunto") + "'"
                         + " , '" + request.getParameter("txtobservaciones") + "'"
                         + " , " + cc + ""
-                        + " , '" + id_depto_destin + "'"
-                        + " , " + request.getParameter("cbonomdest") + ""
+                        + " , " + id_depto_destin + " "
+                        + " , " + nom_destinatario + ""
                         + " , " + request.getParameter("cbodepto_tur") + ""
-                        + " , '" + fechalimite + "'"
+                        + " , '" + fechalimitef + "'"
                         + " , " + session.getAttribute("userid") + ""
                         + " , now() "
-                        + " )  ");
-
-              //  System.out.println(query);
+                        + " )");
+                //System.out.println(query);
                 pstmt = connx.prepareStatement(query);
                 pstmt.executeUpdate();
+                resultSet = null;
+                resultSet = statement.executeQuery(" SELECT @@IDENTITY ");
+                if (resultSet.next()) {
+                    id_oficio = resultSet.getInt(1);
+                }
+                map.put("id_oficio", id_oficio);
                 map.put("done", 1);
             }
 
@@ -479,6 +529,7 @@ public class recibeOficios extends HttpServlet {
 
         } catch (Exception e) {
 
+            //System.out.println("ERROR ---- " + e);
         } finally {
             DbUtils.closeQuietly(resultSet);
             DbUtils.closeQuietly(statement);
