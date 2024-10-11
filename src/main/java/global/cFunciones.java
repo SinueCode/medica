@@ -4,11 +4,14 @@
  */
 package global;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,6 +67,22 @@ public class cFunciones {
          */
 
         return html;
+    }
+
+    public static boolean fnhaysesion(HttpSession session) throws NamingException, SQLException {
+
+        boolean permiso = false;
+        if (session != null) {
+            if (session.getAttribute("userid") == null || session.getAttribute("auth") == null || (Integer) session.getAttribute("auth") != 1) {
+                permiso = false;
+            } else {
+                permiso = true;
+
+            }
+
+        }
+
+        return permiso;
     }
 
     public static void setSession(Connection connx, HttpSession session, HttpServletResponse response, HttpServletRequest request, String usuario) throws SQLException, NamingException {
@@ -125,13 +144,44 @@ public class cFunciones {
 
         return validar;
     }
+    
+        public static boolean validateFecha(Connection connx, String fecha) throws NamingException, SQLException {
+//      17/08/2024 09:66 ----17-08-2024 09:66
+        String d = fecha.substring(0, 2);
+        String m = fecha.substring(3, 5);
+        String a = fecha.substring(6, 10);
+        //String h = fecha.substring(11, 16);
+        String fechanew = a + "-" + m + "-" + d;
+     //System.out.println("fecha--->" + fechanew);
+        // System.out.println(" SELECT DATE('" + fechanew + "') as fecha");
+        Statement statement = connx.createStatement();
+        ResultSet resultSet = null;
+        boolean validar = true;
+        try {
+            resultSet = statement.executeQuery(" SELECT DATE('" + fechanew + "') as fecha ");
+            if (resultSet.next()) {
+                if (resultSet.getString(1) == null) {
+                    validar = false;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error --> ", e);
+        } finally {
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+        }
+
+        return validar;
+    }
+        
+        
 
     public static String f131_to_126(String fecha131) {
+        
         //01/01/2021 06:00 <--------> 2021-01-01 06:00:00
         //System.out.println("fecha131"+fecha131);
         String fecha126 = "";
         try {
-
             String d = fecha131.substring(0, 2);
             String m = fecha131.substring(3, 5);
             String a = fecha131.substring(6, 10);
@@ -145,9 +195,30 @@ public class cFunciones {
 
         return fecha126;
     }
+    
+        public static String f131_to_112(String fecha131) {
+        
+        //01/01/2021 <--------> 20210101
+        //System.out.println("fecha131"+fecha131);
+        String fecha112 = "";
+        try {
+            String d = fecha131.substring(0, 2);
+            String m = fecha131.substring(3, 5);
+            String a = fecha131.substring(6, 10);
+          //  String h = fecha131.substring(11, 16);
+            fecha112 = a + m + d;
+
+            // System.out.println("fecha126"+fecha126);
+        } catch (Exception $e) {
+
+        }
+
+        return fecha112;
+    }
 
     public static String f131_to_126_NUM(String fecha131) {
         //01/01/2021 06:00 <--------> 2021-01-01 06:00:00
+         
         //System.out.println("fecha131"+fecha131);
         String fecha126 = "";
         try {
@@ -186,6 +257,155 @@ public class cFunciones {
         }
 
         return sfecha;
+    }
+
+    public static String getNomServXclave(String idservicio) throws SQLException, Exception {
+        //System.out.println("dfsdfsdf---->" + idservicio);
+        Context ctx = new InitialContext();
+        Context envctx = (Context) ctx.lookup("java:comp/env");
+        DataSource ds = (DataSource) envctx.lookup("jdbc/MEDICA");
+        Connection connx = ds.getConnection();
+        Statement statement = connx.createStatement();
+        ResultSet resultSet = null;
+
+        String name_servicio = "";
+        try {
+            // select cdescripcion from ctl_departamentos where clave ='2000'
+            resultSet = statement.executeQuery("select cdescripcion from ctl_departamentos where clave = " + idservicio + "  ");
+            if (resultSet.next()) {
+                name_servicio = resultSet.getString("cdescripcion");
+            } else {
+                name_servicio = " ";
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error --> ", e);
+        } finally {
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+            if (connx != null) {
+                try {
+                    connx.close();
+                } catch (SQLException ignore) {
+                }
+            }
+        }
+        return name_servicio;
+    }
+
+    public static String getNomPersonaXid(String idpersonal) throws SQLException, Exception {
+        // System.out.println("idname---->" + idpersonal);
+        Context ctx = new InitialContext();
+        Context envctx = (Context) ctx.lookup("java:comp/env");
+        DataSource ds = (DataSource) envctx.lookup("jdbc/MEDICA");
+        Connection connx = ds.getConnection();
+        Statement statement = connx.createStatement();
+        ResultSet resultSet = null;
+        String name = "";
+        try {
+            // select cdescripcion from ctl_departamentos where clave ='2000'
+            resultSet = statement.executeQuery("select CONCAT(nombre, ' ', apellido1, ' ', apellido2) as nombre from of_usr_oficios where id = " + idpersonal + "  ");
+            if (resultSet.next()) {
+                name = resultSet.getString("nombre");
+            } else {
+                name = " ";
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error --> ", e);
+        } finally {
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+            if (connx != null) {
+                try {
+                    connx.close();
+                } catch (SQLException ignore) {
+                }
+            }
+        }
+        return name;
+    }
+
+    public static String getnumOf_or_RefXid(String idoficio) throws SQLException, Exception {
+        //System.out.println("idoficio---->" + idoficio);
+        Context ctx = new InitialContext();
+        Context envctx = (Context) ctx.lookup("java:comp/env");
+        DataSource ds = (DataSource) envctx.lookup("jdbc/MEDICA");
+        Connection connx = ds.getConnection();
+        Statement statement = connx.createStatement();
+        ResultSet resultSet = null;
+        String name = "";
+        try {
+
+            resultSet = statement.executeQuery("select sn "
+                    + ", CASE WHEN sn = 0 THEN CONCAT(id_dpto_remit,'/', num_of ,'/', annio)  ELSE'' END as num_oficio "
+                    + ", CASE WHEN sn = 0 THEN ''  ELSE num_referencia END as num_referencia from of_recepcion WHERE  idof_recepcion = " + idoficio + "  ");
+
+            if (resultSet.next()) {
+                if (resultSet.getString(1).trim().equals("0")) {
+                    name = "No. " + resultSet.getString(2).trim();
+                } else {
+                    name = "No. de referencia: " + resultSet.getString(3).trim();
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error --> ", e);
+        } finally {
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+            if (connx != null) {
+                try {
+                    connx.close();
+                } catch (SQLException ignore) {
+                }
+            }
+        }
+        return name;
+    }
+
+    public static String ifOfvencidoxid(String idoficio) throws SQLException, Exception {
+       // System.out.println("idoficiommmm---->" + idoficio);
+        Context ctx = new InitialContext();
+        Context envctx = (Context) ctx.lookup("java:comp/env");
+        DataSource ds = (DataSource) envctx.lookup("jdbc/MEDICA");
+        Connection connx = ds.getConnection();
+        Statement statement = connx.createStatement();
+        ResultSet resultSet = null;
+        String flimite = "";
+        String frecepcion = "";
+        String valor = "";
+        try {
+            resultSet = statement.executeQuery("select DATE_FORMAT(fecha_limiter, '%Y%m%d%H%i') fecha_limiter ,DATE_FORMAT(fecha_recepcion, '%Y%m%d%H%i') fecha_recepcion from of_recepcion where idof_recepcion = " + idoficio + "  ");
+            if (resultSet.next()) {
+                flimite = resultSet.getString("fecha_limiter");
+                frecepcion = resultSet.getString("fecha_recepcion");
+            }
+            
+            //System.out.println(flimite);
+ 
+           valor = flimite;
+            BigInteger biFechaRec = new BigInteger(frecepcion);
+            BigInteger biFechaLimite = new BigInteger(flimite);
+            switch (biFechaRec.compareTo(biFechaLimite)) {
+                case 1: //si es 1 quiere decir que el numero 1 osea biFechaRec es mayor que biFechaLimite
+                    valor = "1";
+                    break;
+                default:
+                    break;
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error --> ", e);
+        } finally {
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+            if (connx != null) {
+                try {
+                    connx.close();
+                } catch (SQLException ignore) {
+                }
+            }
+        }
+        return valor;
     }
 
     public static String charespecial(String s) { //sinue

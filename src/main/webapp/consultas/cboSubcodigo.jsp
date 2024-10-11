@@ -18,7 +18,7 @@
     %>
 </script>
 <sql:query var="qsubcodigoar" dataSource="jdbc/MEDICA">
-    select sub_codigo, cdescripcion from of_ctl_archiv_det
+    select sub_codigo, upper(cdescripcion) cdescripcion from of_ctl_archiv_det
     where codigo = '<%=request.getParameter("id_cod")%>'
     order by id
 </sql:query>

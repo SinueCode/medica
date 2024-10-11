@@ -18,7 +18,7 @@
     %>
 </script>
 <sql:query var="qcarpetaar" dataSource="jdbc/MEDICA">
-    SELECT id_carpeta,cdescripcion  
+    SELECT id_carpeta ,upper(cdescripcion) cdescripcion
     FROM of_ctl_archiv_carpeta 
     where id_sub_codigo = '<%=request.getParameter("id_subcod")%>'    
     order by id_carpeta  

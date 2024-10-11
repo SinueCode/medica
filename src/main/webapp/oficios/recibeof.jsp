@@ -7,7 +7,11 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-
+<%
+    if (!global.cFunciones.fnhaysesion(session)) {
+        response.sendRedirect(request.getContextPath() + "/cerrar_sesion.jsp");
+    } else {
+%>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -63,12 +67,12 @@
                     DATE_FORMAT(now(), '%d/%m/%Y 00:00') as fechaactual
                     , DATE_FORMAT( DATE_ADD(now(), interval -1 month), '%d/%m/%Y 00:00') as fmenos1m
                     , DATE_FORMAT( DATE_ADD(now(), interval +1 month), '%d/%m/%Y 00:00') as fmaslm
-                      , DATE_FORMAT(now(), '%d%m%Y%H%i') as freferencia
+                    , DATE_FORMAT(now(), '%d%m%Y%H%i') as freferencia
                 </sql:query>
                 <c:set var="fechaactual" value="${conactualdate.rows[0].fechaactual}"/>     
                 <c:set var="fmenos1m" value="${conactualdate.rows[0].fmenos1m}"/>     
                 <c:set var="fmaslm" value="${conactualdate.rows[0].fmaslm}"/>     
-                  <c:set var="freferencia" value="${conactualdate.rows[0].freferencia}"/>     
+                <c:set var="freferencia" value="${conactualdate.rows[0].freferencia}"/>     
                 <div class="form-group col-md">
                     <div class="form-check">
                         <label>S/N</label>
@@ -81,7 +85,7 @@
                         <select id='cbodeptoremit' name='cbodeptoremit' class="selectpicker form-control" style=" height: 55px;" data-show-subtext="false" data-live-search="true" data-width="85px" height="200px">
                             <option value="0" selected >Dpto.</option>
                             <sql:query var="qareas" dataSource="jdbc/MEDICA">
-                                select clave, cdescripcion 
+                                select clave, upper(cdescripcion) cdescripcion 
                                 from ctl_departamentos 
                                 where clave != 2000
                                 order by clave asc
@@ -129,7 +133,7 @@
                         <select id="cboperdm" name="cboperdm" class="form-select input-b" data-live-search="true">                            
                             <option value="-1">Seleccione...</option>
                             <sql:query var="qperdm" dataSource="jdbc/MEDICA">
-                                select id, cdescripcion from of_ctl_personal_dm where cstatus = 1 order by cdescripcion asc
+                                select id, upper(cdescripcion) cdescripcion from of_ctl_personal_dm where cstatus = 1 order by cdescripcion asc
                             </sql:query>
                             <c:forEach var="perdm" begin="0" items="${qperdm.rowsByIndex}">
                                 <option data-subtext="${perdm[1]}" value="${perdm[0]}">${perdm[1]}</option>
@@ -174,8 +178,7 @@
                                 </select>
                             </div>
                         </div>
-                        <br>                    
-
+                        <br>
                         <div id="divotroremitente" class="otroremitentename" style="display: none" >  
                             <br>
                             <div class="card">
@@ -186,15 +189,15 @@
                                     <div class="form-group row">
                                         <div class="col-md-3 mb-3 mb-lg-0">
                                             <label for="iotron">Nombre:</label>
-                                            <input type="text" class="form-control input-b" id="iotron" name="iotron" placeholder="Nombre">
+                                            <input type="text" class="form-control input-b" id="iotron" name="iotron"  onchange="fnupperfg(this)" placeholder="Nombre">
                                         </div>
                                         <div class="col-md-3 mb-3 mb-lg-0">
                                             <label for="iotroap1">Apellido1:</label>
-                                            <input type="text" class="form-control input-b" id="iotroap1" name="iotroap1" placeholder="Apellido1">
+                                            <input type="text" class="form-control input-b" id="iotroap1" name="iotroap1" onchange="fnupperfg(this)" placeholder="Apellido1">
                                         </div>
                                         <div class="col-md-3 mb-3 mb-lg-0">
                                             <label for="iotroap2">Apellido2:</label>
-                                            <input type="text" class="form-control input-b" id="iotroap2" name="iotroap2" placeholder="Apellido2">
+                                            <input type="text" class="form-control input-b" id="iotroap2" name="iotroap2" onchange="fnupperfg(this)" placeholder="Apellido2">
                                         </div>
                                         <br>
                                     </div>
@@ -203,14 +206,13 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="form-group row">
                     <div class="col-md-6">
                         <label for="icbocodigo_arch">Clasificación:</label>                      
                         <select id="cbocodigo_arch" name="cbocodigo_arch" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
                             <option value="0" selected >Seleccione...</option>
                             <sql:query var="qcodigoar" dataSource="jdbc/MEDICA">
-                                select codigo, cdescripcion from of_ctl_archiv_p 
+                                select codigo, upper(cdescripcion) cdescripcion from of_ctl_archiv_p 
                                 order by id
                             </sql:query>
                             <c:forEach var="codigoar" begin="0" items="${qcodigoar.rowsByIndex}">
@@ -273,7 +275,7 @@
                             <select id="cbodepto_destm" name="cbodepto_destm" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true" >                            
                                 <!--                                <option value="0" selected >Dpto.</option>-->
                                 <sql:query var="qareas_otro" dataSource="jdbc/MEDICA">
-                                    select clave, cdescripcion from ctl_departamentos 
+                                    select clave, upper(cdescripcion) cdescripcion from ctl_departamentos 
                                     where clave = 2000
                                     order by clave asc
                                 </sql:query>
@@ -286,7 +288,7 @@
                             <select id="cbodepto_dest" name="cbodepto_dest" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
                                 <option value="0" selected >Dpto.</option>
                                 <sql:query var="qareas_otro" dataSource="jdbc/MEDICA">
-                                    select clave, cdescripcion from ctl_departamentos 
+                                    select clave, upper(cdescripcion) cdescripcion from ctl_departamentos 
                                     where clave != 2000
                                     order by clave asc
                                 </sql:query>
@@ -314,15 +316,15 @@
                                 <div class="form-group row">
                                     <div class="col-md-3 mb-3 mb-lg-0">
                                         <label for="iotrondest">Nombre:</label>
-                                        <input type="text" class="form-control input-b" id="iotrondest" name="iotrondest" placeholder="Nombre">
+                                        <input type="text" class="form-control input-b" id="iotrondest" name="iotrondest" onchange="fnupperfg(this)" placeholder="Nombre">
                                     </div>
                                     <div class="col-md-3 mb-3 mb-lg-0">
                                         <label for="iotroap1dest">Apellido1:</label>
-                                        <input type="text" class="form-control input-b" id="iotroap1dest" name="iotroap1dest" placeholder="Apellido1">
+                                        <input type="text" class="form-control input-b" id="iotroap1dest" name="iotroap1dest" onchange="fnupperfg(this)" placeholder="Apellido1">
                                     </div>
                                     <div class="col-md-3 mb-3 mb-lg-0">
                                         <label for="iotroap2dest">Apellido2:</label>
-                                        <input type="text" class="form-control input-b" id="iotroap2dest" name="iotroap2dest" placeholder="Apellido2">
+                                        <input type="text" class="form-control input-b" id="iotroap2dest" name="iotroap2dest" onchange="fnupperfg(this)" placeholder="Apellido2">
                                     </div>
                                     <br>
                                 </div>
@@ -336,7 +338,7 @@
                         <select id="cbodepto_tur" name="cbodepto_tur" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
                             <option value="0" selected >Dpto.</option>
                             <sql:query var="qareas_tur" dataSource="jdbc/MEDICA">
-                                select clave, cdescripcion from ctl_departamentos 
+                                select clave, upper(cdescripcion) cdescripcion from ctl_departamentos 
                                 order by clave asc
                             </sql:query>
                             <c:forEach var="areas_tur" begin="0" items="${qareas_tur.rowsByIndex}">
@@ -524,6 +526,9 @@
 
 
 
+
+
+
             $('#frm_RegOficio').ajaxForm({
                 success: function (data) {
                     // alert("aquiiiiiiiiii");
@@ -535,9 +540,8 @@
                         $('html, body').animate({scrollTop: $('#' + elemento).offset().top - 86}, 15);
                     } else {
                         id_oficio = data.id_oficio;
-                        alert("El oficio se registro correctamente, FOLIO CONSECUTIVO: "+ id_oficio);
-                      
-                         window.top.location.href = '/medica/oficios/oficios_rec.jsp?';
+                        alert("El oficio se registro correctamente, FOLIO CONSECUTIVO: "+ id_oficio);                      
+                         window.top.location.href = '/medica/oficios/list_oficios_rec.jsp?';
                          $('.btnguardar').attr("disabled", true);
                          $('.btnguardar').append('<img src="../images/loading.gif" width="11" height="11" alt="" />');
                     }
@@ -573,3 +577,6 @@
     </body>
 </html>
 
+<%
+    }
+%> 

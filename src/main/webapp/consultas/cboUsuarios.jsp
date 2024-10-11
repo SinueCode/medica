@@ -16,7 +16,7 @@
     $('#cbonomremit').addClass('disabled');
 </script> 
 <sql:query var="consulta" dataSource="jdbc/MEDICA">
-    SELECT o.id, CONCAT(o.nombre,' ',o.apellido1, ' ',o.apellido2) as name  FROM of_usr_oficios o 
+    SELECT o.id,  upper(CONCAT(o.nombre,' ',o.apellido1, ' ',o.apellido2)) as name  FROM of_usr_oficios o 
     WHERE o.ccosto= '<%=request.getParameter("valor")%>' and o.cstatus = 1
 </sql:query>
 <% }else {
@@ -25,7 +25,7 @@
     $('#cbonomremit').removeClass('disabled');
 </script> 
 <sql:query var="consulta" dataSource="jdbc/MEDICA">
-    SELECT o.id, CONCAT(o.nombre,' ',o.apellido1, ' ',o.apellido2) as name  FROM of_usr_oficios o 
+    SELECT o.id,  upper(CONCAT(o.nombre,' ',o.apellido1, ' ',o.apellido2)) as name  FROM of_usr_oficios o 
     WHERE o.ccosto= '<%=request.getParameter("valor")%>' and o.cstatus = 1 UNION SELECT id, nombre as name FROM of_usr_oficios WHERE ccosto=9999
 </sql:query>
 <%

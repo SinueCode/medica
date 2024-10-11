@@ -17,6 +17,10 @@
     };
 }(jQuery));
 
+function fnupperfg(obj) {
+    obj.value = obj.value.toUpperCase();
+}
+
 
 var fnmedica = {
     initcbocarpeta: function (cod, subcod) {
@@ -30,6 +34,13 @@ var fnmedica = {
                 ///$('.otroremitentename').hide();
             }
         });
+    },
+
+    marca_atendido: function (idfolio) {     
+        var idhosp = $(this).attr('data');
+        $('.titlea').html('Oficio atendido');
+        $('.modaledit_cont').load('wmarcar_atendido.jsp?idfolio=' + idfolio);
+        $('#exampleModal').modal('show');
     }
 }
 

@@ -92,7 +92,7 @@ public class recibeOficios extends HttpServlet {
             String fechalimite = "";
             String fecharecepf = "";
             String fechalimitef = "";
-            int nom_destinatario = 0;            
+            int nom_destinatario = 0;
             int id_oficio = 0;
             //****************************** DESTINATARIO *******************************************
 
@@ -122,7 +122,7 @@ public class recibeOficios extends HttpServlet {
                 if (request.getParameter("cbonomremit") == null || request.getParameter("cbonomremit").trim().equals("")) {
                     nom_remit = 0;
                 } else {
-                    nom_remit = Integer.parseInt(request.getParameter("cbonomremit"));
+                    nom_remit = Integer.parseInt(request.getParameter("cbonomremit").toUpperCase());
                 }
                 txt_dep_rem = "";
                 txt_nom_rem = "";
@@ -133,8 +133,8 @@ public class recibeOficios extends HttpServlet {
                 num_of = 0;
                 annio_of = 0;
                 nom_remit = 0;
-                txt_dep_rem = request.getParameter("dep_remitente_sn");
-                txt_nom_rem = request.getParameter("nom_remitente_sn");
+                txt_dep_rem = request.getParameter("dep_remitente_sn").toUpperCase();
+                txt_nom_rem = request.getParameter("nom_remitente_sn").toUpperCase();
             }
             if (request.getParameter("chk-cc") == null) { //PARA DIR MÉDICA
                 cc = "0";
@@ -163,6 +163,7 @@ public class recibeOficios extends HttpServlet {
                         elemento = "iconsecutivo";
                     }
                 }
+               
                 if (valida) {
                     if (request.getParameter("cboannio").trim().equals("0")) {
                         valida = false;
@@ -170,6 +171,19 @@ public class recibeOficios extends HttpServlet {
                         elemento = "cboannio";
                     }
                 }
+                
+                 //validar que el consecutivo no exista ya en la base de datos
+                if (valida) {
+                    resultSet = null;
+                    resultSet = statement.executeQuery("select idof_recepcion from of_recepcion where num_of = " + request.getParameter("iconsecutivo") + " and  annio ='" + request.getParameter("cboannio") + "' and id_dpto_remit =" + request.getParameter("cbodeptoremit") + "");                   
+                    //System.out.println("select idof_recepcion from of_recepcion where num_of = " + request.getParameter("iconsecutivo") + " and  annio ='" + request.getParameter("cboannio") + "' and id_dpto_remit =" + request.getParameter("cbodeptoremit") + "");
+                    while (resultSet.next()) {
+                        valida = false;
+                        mensaje = "El oficio ya existe, verifica.";
+                        elemento = "iconsecutivo";
+                    }
+                }
+                
                 if (valida) { // cbonomremit 
                     resultSet = null;
                     resultSet = statement.executeQuery("SELECT id  FROM of_usr_oficios  WHERE id = " + request.getParameter("cbonomremit") + "");
@@ -234,6 +248,20 @@ public class recibeOficios extends HttpServlet {
                         elemento = "nom_remitente_sn";
                     }
                 }
+                
+                
+                  //validar que la referencia no existe previamente
+                if (valida) {
+                    resultSet = null;
+                    resultSet = statement.executeQuery("select num_referencia from of_recepcion where num_referencia = '" + request.getParameter("iotro_numof") + "' ");                   
+                    while (resultSet.next()) {
+                        valida = false;
+                        mensaje = "El número de referencia ya existe, verifica.";
+                        elemento = "iotro_numof";
+                    }
+                }
+                
+                
             }
             if (valida) {
                 if (request.getParameter("ifecharecep") == null || request.getParameter("ifecharecep").trim().equals("")) {
@@ -364,9 +392,9 @@ public class recibeOficios extends HttpServlet {
                 if (resultSet.next()) {
                     if (resultSet.getString(1).equals("3")) { //otro destinatario   
 
-                        nombredest_of = request.getParameter("iotrondest");
-                        ap1dest_of = request.getParameter("iotroap1dest");
-                        ap2dest_of = request.getParameter("iotroap2dest");
+                        nombredest_of = request.getParameter("iotrondest").toUpperCase();
+                        ap1dest_of = request.getParameter("iotroap1dest").toUpperCase();
+                        ap2dest_of = request.getParameter("iotroap2dest").toUpperCase();
                         if (valida) {
                             if (request.getParameter("iotrondest") == null || request.getParameter("iotrondest").trim().equals("")) {
                                 valida = false;
@@ -485,13 +513,13 @@ public class recibeOficios extends HttpServlet {
                         + " , id_clasif, id_sub_clasif, id_carpeta"
                         + ", asunto, observaciones , cc "
                         + " , id_dpto_destinat, id_nom_destinat,id_depto_turnadoa "
-                        + " , fecha_limiter, id_alta_ausuario,fecha_alta) VALUES"
+                        + " , fecha_limiter, id_alta_ausuario,fecha_alta, cstatus) VALUES"
                         + " ( " + snf + " "
                         + " ," + id_dep_rem + ""
                         + " ," + num_of + " "
                         + " ," + annio_of + ""
                         + " , " + correo + " "
-                        + " , '" + request.getParameter("iotro_numof") + "'"
+                        + " , '" + request.getParameter("iotro_numof").toUpperCase() + "'"
                         + " , '" + fecharecepf + "'"
                         + " , " + request.getParameter("cboperdm") + ""
                         + " , " + nom_remit + ""
@@ -500,8 +528,8 @@ public class recibeOficios extends HttpServlet {
                         + " , '" + request.getParameter("cbocodigo_arch") + "'"
                         + " , '" + request.getParameter("cbosubcodigo_arch") + "'"
                         + " , " + request.getParameter("cbocarpeta_arch") + ""
-                        + " , '" + request.getParameter("txtasunto") + "'"
-                        + " , '" + request.getParameter("txtobservaciones") + "'"
+                        + " , '" + request.getParameter("txtasunto").toUpperCase() + "'"
+                        + " , '" + request.getParameter("txtobservaciones").toUpperCase() + "'"
                         + " , " + cc + ""
                         + " , " + id_depto_destin + " "
                         + " , " + nom_destinatario + ""
@@ -509,6 +537,7 @@ public class recibeOficios extends HttpServlet {
                         + " , '" + fechalimitef + "'"
                         + " , " + session.getAttribute("userid") + ""
                         + " , now() "
+                        + " , 'P'"
                         + " )");
                 //System.out.println(query);
                 pstmt = connx.prepareStatement(query);
