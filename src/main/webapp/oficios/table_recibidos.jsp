@@ -9,11 +9,8 @@
 
 <%
     String sFiltro = " and DATE_FORMAT(O.fecha_recepcion,'%Y%m%d') between '" + request.getParameter("fi").toString().trim() + "' and  '" + request.getParameter("ff").toString().trim() + "' ";
-    System.out.println("llega@@@@@@@@@@@@@@@    " +sFiltro);
-
-
+    // System.out.println("llega@@@@@@@@@@@@@@@    " +sFiltro);
 %> 
-
 <!DOCTYPE html>
 <!-- query oficios recibidos para la dirección médica-->
 <sql:query var="qoficiosrec" dataSource="jdbc/MEDICA">
@@ -51,10 +48,9 @@
     --  and O.cc != 1
     order by num_folio desc
 </sql:query>
-
 <table id="tbl_ofrec_dm" class="table table-striped table-bordered nowrap" >
     <thead>
-        <tr>            <th>Núm folio</th>
+        <tr><th>Núm folio</th>
             <th>F. recepción</th>
             <th>S/N</th>
             <th>Núm Oficio</th>
@@ -168,16 +164,21 @@
         scrollY: 500,
         order: [[0, 'desc']]
         , createdRow: function (row, data, index) {
-            if (data[18] === 'A') {
-                $(row).addClass('table-primary');
-            }
-            if (data[19] === '1') {
+            if (data[19] === 'Vencido') { //vencido 
                 $(row).removeClass('table-primary');
                 $(row).addClass('table-danger');
+
+            }
+
+            if (data[18] === 'A') { //atendido o pendiente
+                $(row).removeClass('table-danger');
+                $(row).addClass('table-primary');
+
+
             }
         },
         columnDefs: [
-            {targets: [18, 19], visible: false},
+            //{targets: [18, 19], visible: false},
             {targets: '_all', visible: true}
         ]
                 // ,columnDefs: [{ visible: false, targets: 18 }]

@@ -42,8 +42,8 @@
                                 </h1>
                                 <br>
                                 <p>
-                                    <b> ¡Bienvenido <%=session.getAttribute("username")%>!</b>
-                                    a nuestro espacio dedicado al apoyo de las actividades de la Dirección Médica. En este sitio, encontrarás, herramientas diseñadas para facilitar y optimizar procesos  ????? médicos.
+                                    <b> ¡Bienvenido <%=session.getAttribute("username")%>!</b>                                    
+                                    a nuestro espacio dedicado al apoyo de las actividades de la Dirección Médica. En este sitio, encontrarás herramientas diseñadas para facilitar y optimizar la gestión clínica y administrativa, permitiéndote llevar un control más eficiente de las actividades diarias.                                    
                                 </p>
                             </div>
                         </div>

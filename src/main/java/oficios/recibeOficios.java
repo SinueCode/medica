@@ -93,7 +93,8 @@ public class recibeOficios extends HttpServlet {
             String fecharecepf = "";
             String fechalimitef = "";
             int nom_destinatario = 0;
-            int id_oficio = 0;
+            int id_oficio = 0;            
+            int id_oficiomax =0;
             //****************************** DESTINATARIO *******************************************
 
             if (request.getParameter("chk-correo") == null) {
@@ -163,7 +164,7 @@ public class recibeOficios extends HttpServlet {
                         elemento = "iconsecutivo";
                     }
                 }
-               
+
                 if (valida) {
                     if (request.getParameter("cboannio").trim().equals("0")) {
                         valida = false;
@@ -171,11 +172,11 @@ public class recibeOficios extends HttpServlet {
                         elemento = "cboannio";
                     }
                 }
-                
-                 //validar que el consecutivo no exista ya en la base de datos
+
+                //validar que el consecutivo no exista ya en la base de datos
                 if (valida) {
                     resultSet = null;
-                    resultSet = statement.executeQuery("select idof_recepcion from of_recepcion where num_of = " + request.getParameter("iconsecutivo") + " and  annio ='" + request.getParameter("cboannio") + "' and id_dpto_remit =" + request.getParameter("cbodeptoremit") + "");                   
+                    resultSet = statement.executeQuery("select idof_recepcion from of_recepcion where num_of = " + request.getParameter("iconsecutivo") + " and  annio ='" + request.getParameter("cboannio") + "' and id_dpto_remit =" + request.getParameter("cbodeptoremit") + "");
                     //System.out.println("select idof_recepcion from of_recepcion where num_of = " + request.getParameter("iconsecutivo") + " and  annio ='" + request.getParameter("cboannio") + "' and id_dpto_remit =" + request.getParameter("cbodeptoremit") + "");
                     while (resultSet.next()) {
                         valida = false;
@@ -183,7 +184,7 @@ public class recibeOficios extends HttpServlet {
                         elemento = "iconsecutivo";
                     }
                 }
-                
+
                 if (valida) { // cbonomremit 
                     resultSet = null;
                     resultSet = statement.executeQuery("SELECT id  FROM of_usr_oficios  WHERE id = " + request.getParameter("cbonomremit") + "");
@@ -248,20 +249,18 @@ public class recibeOficios extends HttpServlet {
                         elemento = "nom_remitente_sn";
                     }
                 }
-                
-                
-                  //validar que la referencia no existe previamente
+
+                //validar que la referencia no existe previamente
                 if (valida) {
                     resultSet = null;
-                    resultSet = statement.executeQuery("select num_referencia from of_recepcion where num_referencia = '" + request.getParameter("iotro_numof") + "' ");                   
+                    resultSet = statement.executeQuery("select num_referencia from of_recepcion where num_referencia = '" + request.getParameter("iotro_numof") + "' ");
                     while (resultSet.next()) {
                         valida = false;
                         mensaje = "El número de referencia ya existe, verifica.";
                         elemento = "iotro_numof";
                     }
                 }
-                
-                
+
             }
             if (valida) {
                 if (request.getParameter("ifecharecep") == null || request.getParameter("ifecharecep").trim().equals("")) {
@@ -506,7 +505,15 @@ public class recibeOficios extends HttpServlet {
                         nom_destinatario = resultSet.getInt(1);
                     }
                 }
-                query = (" INSERT INTO of_recepcion ( sn, id_dpto_remit, num_of, annio"
+                //-------
+                resultSet = null;
+                resultSet = statement.executeQuery("select IFNULL(MAX(idof_recepcion) + 1,1) as max from of_recepcion where annio = " + annio_of);
+                if (resultSet.next()) {
+                    id_oficiomax = resultSet.getInt(1);
+                }
+                //-------
+
+                query = (" INSERT INTO of_recepcion (idof_recepcion, sn, id_dpto_remit, num_of, annio"
                         + " , correo, num_referencia, fecha_recepcion, id_personal_recibe"
                         + " , id_nom_remitente"
                         + ",nom_remitente_txt,dpto_remitente_txt"
@@ -514,7 +521,8 @@ public class recibeOficios extends HttpServlet {
                         + ", asunto, observaciones , cc "
                         + " , id_dpto_destinat, id_nom_destinat,id_depto_turnadoa "
                         + " , fecha_limiter, id_alta_ausuario,fecha_alta, cstatus) VALUES"
-                        + " ( " + snf + " "
+                        + " ( " + id_oficiomax + " "
+                         + " ," + snf + ""
                         + " ," + id_dep_rem + ""
                         + " ," + num_of + " "
                         + " ," + annio_of + ""
@@ -539,15 +547,15 @@ public class recibeOficios extends HttpServlet {
                         + " , now() "
                         + " , 'P'"
                         + " )");
-                //System.out.println(query);
+                System.out.println(query);
                 pstmt = connx.prepareStatement(query);
                 pstmt.executeUpdate();
                 resultSet = null;
-                resultSet = statement.executeQuery(" SELECT @@IDENTITY ");
-                if (resultSet.next()) {
-                    id_oficio = resultSet.getInt(1);
-                }
-                map.put("id_oficio", id_oficio);
+//                resultSet = statement.executeQuery(" SELECT @@IDENTITY ");
+//                if (resultSet.next()) {
+//                    id_oficio = resultSet.getInt(1);
+//                }
+                map.put("id_oficio", id_oficiomax);
                 map.put("done", 1);
             }
 
@@ -558,7 +566,7 @@ public class recibeOficios extends HttpServlet {
 
         } catch (Exception e) {
 
-            //System.out.println("ERROR ---- " + e);
+           System.out.println("ERROR ---- " + e);
         } finally {
             DbUtils.closeQuietly(resultSet);
             DbUtils.closeQuietly(statement);

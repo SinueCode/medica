@@ -26,8 +26,10 @@
             url: '../of/marca_atendido?id_folio=' + id_folio,
             success: function (data) {
                 if (data.done === 1) { //se agrego
-                    //  alert("Atendido" );                  
-                    $('.atendido_' + id_folio).addClass("table-success");
+                    //  alert("Atendido" );     
+                    
+                    $('.atendido_' + id_folio).removeClass('table-danger'); //en caso de q este vencido
+                    $('.atendido_' + id_folio).addClass("table-primary");
                 }
             }
         });

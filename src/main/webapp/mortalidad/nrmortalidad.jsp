@@ -6,6 +6,11 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+<%
+    if (!global.cFunciones.fnhaysesion(session)) {
+        response.sendRedirect(request.getContextPath() + "/cerrar_sesion.jsp");
+    } else {
+%>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -644,3 +649,7 @@
         </script>
     </body>
 </html>
+<%
+    }
+%> 
+

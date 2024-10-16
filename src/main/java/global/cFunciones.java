@@ -91,7 +91,11 @@ public class cFunciones {
         try {
             resultSet = null;
             statement = connx.createStatement();
-            resultSet = statement.executeQuery(" SELECT u.ID_USUARIO, u.usuario,u.ID_DEPARTAMENTO, CONCAT_WS(' ',u.NOMBRE, u.apellido1,u.apellido2) as NOMCOM, d.CDESCRIPCION, u.p_admin,u.p_mortalidad, u.p_eguardia "
+            resultSet = statement.executeQuery(" SELECT u.ID_USUARIO, u.usuario,u.ID_DEPARTAMENTO, CONCAT_WS(' ',u.NOMBRE, u.apellido1,u.apellido2) as NOMCOM, d.CDESCRIPCION"
+                    + " , u.p_admin"
+                    + " ,u.p_mortalidad"
+                    + " , u.p_eguardia"
+                    + " , u.p_oficios"
                     + " FROM usuarios u, ctl_departamentos d "
                     + " WHERE u.usuario = '" + usuario.trim() + "' and u.ID_DEPARTAMENTO = d.clave LIMIT 0,1   ");
             if (resultSet.next()) {
@@ -105,6 +109,7 @@ public class cFunciones {
                 session.setAttribute("user_admin", resultSet.getString("p_admin"));
                 session.setAttribute("user_mortalidad", resultSet.getString("p_mortalidad"));
                 session.setAttribute("user_eguardia", resultSet.getString("p_eguardia"));
+                session.setAttribute("user_oficios", resultSet.getString("p_oficios"));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error --> ", e);
@@ -387,9 +392,10 @@ public class cFunciones {
             BigInteger biFechaLimite = new BigInteger(flimite);
             switch (biFechaRec.compareTo(biFechaLimite)) {
                 case 1: //si es 1 quiere decir que el numero 1 osea biFechaRec es mayor que biFechaLimite
-                    valor = "1";
+                    valor = "Vencido";
                     break;
                 default:
+                      valor = "";
                     break;
             }
 

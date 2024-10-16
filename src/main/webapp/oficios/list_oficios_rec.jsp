@@ -59,7 +59,7 @@
                 <div class="row justify-content-center text-center">
                     <div class="row justify-content-center text-center">
                         <div class="col-12 text-center mb-5">
-                            <small class="small-text">RECEPCIÓN DE OFICIOS ${fechaactual} </small>  
+                            <small class="small-text">RECEPCIÓN DE OFICIOS</small>  
 
                         </div>
                     </div> 
@@ -74,8 +74,14 @@
                                     <label for="ifecharecfin">Fecha fin:</label>
                                     <input type="text" class="form-control input-b" id="ifecharecfin" name="ifecharecfin" placeholder="F. de recepción" >
                                 </div> 
-                                <div class="col-md-3">
+                                <div class="col-md-2">
+                                     <br>
                                     <input type="submit" class="btn btn-primary btnguardar" value="Buscar">
+                                   
+                                </div>
+                                <div class="col-md-4">
+<!--                                    <br>
+                                    <input type="submit" class="btn btn-primary btnguardar" value="Buscar">-->
                                 </div>   
                                 <br>
                             </div>                          
@@ -88,12 +94,8 @@
         <script type="text/javascript">
             sf1 = '${fecha112}';
             sf2 = '${fecha112}';
-            //   alert("sf1" + sf1);
-            //   alert("sf2" + sf2);
+
             $(document).ready(function () {
-                //sFiltro = " ";
-                // sFiltro = " and DATE_FORMAT(O.fecha_recepcion,'%d/%m/%Y') between '05/10/2024' and  '10/10/2024'";
-                //sFiltro = " and DATE_FORMAT(O.fecha_recepcion,'%d/%m/%Y') between '" + sf1 + "' and  '" + sf2 + "'";
                 $('#tablita').load('table_recibidos.jsp?fi=' + sf1 + '&ff=' + sf2);
             });
 
@@ -120,19 +122,11 @@
 
             $('#frm_FiltroOf').ajaxForm({
                 success: function (data) {
-
-                    // alert("aquiiiiiiiiii");
                     if (data.done === 0) {
-                        // elemento = data.elemento;
                         alert(data.mensaje);
                     } else {
-                        alert("se carga la tabla con los nuevos parametros");
+                        // alert("se carga la tabla con los nuevos parametros");
                         $('#tablita').load('table_recibidos.jsp?fi=' + data.fi + '&ff=' + data.ff);
-
-                        // $('#tbl_ofrec_dm').DataTable().ajax.reload();
-
-                        //table.ajax.reload();
-
                     }
                 },
                 beforeSubmit: function () {
