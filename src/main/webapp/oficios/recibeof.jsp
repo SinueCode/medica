@@ -22,6 +22,7 @@
     </head>
     <script type="text/javascript">
         var vflagclose = 0;
+        var cuentadest = 0;
     </script>
     <style>
         .ioficio{
@@ -126,7 +127,7 @@
                 <div class="form-group row">
                     <div class="col-md-4">
                         <label for="ifecharecep">Fecha de recepción:</label>
-                        <input type="text" class="form-control input-b" id="ifecharecep" name="ifecharecep" placeholder="Fecha de recepción" >
+                        <input type="text" class="form-control input-b" id="ifecharecep" name="ifecharecep" autocomplete="off" placeholder="Fecha de recepción" >
                     </div>
                     <div class="col-md-4">
                         <label for="icbonomrec">Nombre de quien recibe:</label>
@@ -262,76 +263,113 @@
 
                 <div class="form-group col-md">
                     <div class="form-check">
-                        <label>C.C.</label>
+                        <label for="chk-cc">C.C. A DIR. MÉDICA</label>
                         <input class="form-check-input" type="checkbox" value="" id="chk-cc" name="chk-cc">                           
                     </div> 
                 </div>
+                <div class="_show_dirmed">
 
-                <div class="form-group row">
-                    <div class="col-md-6">  
-                        <label for="icbonomrec">Departamento:</label> <!-- puede ser a la dirección médica o a otro departamento depende de C.C-->
 
-                        <div id="divdepto_destmedica" >
-                            <select id="cbodepto_destm" name="cbodepto_destm" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true" >                            
-                                <!--                                <option value="0" selected >Dpto.</option>-->
-                                <sql:query var="qareas_otro" dataSource="jdbc/MEDICA">
-                                    select clave, upper(cdescripcion) cdescripcion from ctl_departamentos 
-                                    where clave = 2000
-                                    order by clave asc
-                                </sql:query>
-                                <c:forEach var="areas_otro" begin="0" items="${qareas_otro.rowsByIndex}">
-                                    <option data-subtext="${areas_otro[1]}" value="${areas_otro[0]}">${areas_otro[0]}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                        <div id="divdepto_destotro"  style="display: none">
-                            <select id="cbodepto_dest" name="cbodepto_dest" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
-                                <option value="0" selected >Dpto.</option>
-                                <sql:query var="qareas_otro" dataSource="jdbc/MEDICA">
-                                    select clave, upper(cdescripcion) cdescripcion from ctl_departamentos 
-                                    where clave != 2000
-                                    order by clave asc
-                                </sql:query>
-                                <c:forEach var="areas_otro" begin="0" items="${qareas_otro.rowsByIndex}">
-                                    <option data-subtext="${areas_otro[1]}" value="${areas_otro[0]}">${areas_otro[0]}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="icbonomrec">Nombre(Dirigido a):</label>
-                        <div id="divcbodestinatario">
-                            <select style="width: 350px;" name="" id=""  class="selectpicker form-control" data-live-search="false">
-                                <option value="0">Seleccione...</option>                           
-                            </select>
-                        </div>
-                    </div>
-                    <div id="divotrodestinatario" class="otrodestinatarioname" style="display: none">  
-                        <br>
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title">Otro destinatario:</h5>
+                    <div class="form-group row">
+                        <div class="col-md-6">  
+
+                            <label for="icbonomrec">Departamento:</label> <!-- puede ser a la dirección médica o a otro departamento depende de C.C-->
+
+                            <div id="divdepto_destmedica" >
+                                <select id="cbodepto_destm" name="cbodepto_destm" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true" >                            
+                                    <!--                                <option value="0" selected >Dpto.</option>-->
+                                    <sql:query var="qareas_otro" dataSource="jdbc/MEDICA">
+                                        select clave, upper(cdescripcion) cdescripcion from ctl_departamentos 
+                                        where clave = 2000
+                                        order by clave asc
+                                    </sql:query>
+                                    <c:forEach var="areas_otro" begin="0" items="${qareas_otro.rowsByIndex}">
+                                        <option data-subtext="${areas_otro[1]}" value="${areas_otro[0]}">${areas_otro[0]}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
-                            <div class="card-body">                    
-                                <div class="form-group row">
-                                    <div class="col-md-3 mb-3 mb-lg-0">
-                                        <label for="iotrondest">Nombre:</label>
-                                        <input type="text" class="form-control input-b" id="iotrondest" name="iotrondest" onchange="fnupperfg(this)" placeholder="Nombre">
+                            <div id="divdepto_destotro"  style="display: none">
+                                <select id="cbodepto_dest" name="cbodepto_dest" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">   
+                                    <option value="0" selected >Varios</option>
+                                    <option data-subtext="A TODO EL PERSONAL DEL HIMFG" value="HIMG001">--</option>
+                                    <option data-subtext="A TODOS LOS DIRECTORES, SUBDIRECTORES Y JEFES DE DEPARTAMENTO DEL HIMFG" value="HIMG002">--</option>
+                                    <option value="0" selected >Dpto.</option>
+                                    <sql:query var="qareas_otro" dataSource="jdbc/MEDICA">
+                                        select clave, upper(cdescripcion) cdescripcion from ctl_departamentos 
+                                        where clave != 2000
+                                        order by clave asc
+                                    </sql:query>
+                                    <c:forEach var="areas_otro" begin="0" items="${qareas_otro.rowsByIndex}">
+                                        <option data-subtext="${areas_otro[1]}" value="${areas_otro[0]}">${areas_otro[0]}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="icbonomrec">Nombre(Dirigido a):</label>
+                            <div id="divcbodestinatario">
+                                <select style="width: 350px;" name="" id=""  class="selectpicker form-control" data-live-search="false">
+                                    <option value="0">Seleccione...</option>                           
+                                </select>
+                            </div>
+                        </div>
+                        <div id="divotrodestinatario" class="otrodestinatarioname" style="display: none">  
+                            <br>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Otro destinatario:</h5>
+                                </div>
+                                <div class="card-body">                    
+                                    <div class="form-group row">
+                                        <div class="col-md-3 mb-3 mb-lg-0">
+                                            <label for="iotrondest">Nombre:</label>
+                                            <input type="text" class="form-control input-b" id="iotrondest" name="iotrondest" onchange="fnupperfg(this)" placeholder="Nombre">
+                                        </div>
+                                        <div class="col-md-3 mb-3 mb-lg-0">
+                                            <label for="iotroap1dest">Apellido1:</label>
+                                            <input type="text" class="form-control input-b" id="iotroap1dest" name="iotroap1dest" onchange="fnupperfg(this)" placeholder="Apellido1">
+                                        </div>
+                                        <div class="col-md-3 mb-3 mb-lg-0">
+                                            <label for="iotroap2dest">Apellido2:</label>
+                                            <input type="text" class="form-control input-b" id="iotroap2dest" name="iotroap2dest" onchange="fnupperfg(this)" placeholder="Apellido2">
+                                        </div>
+                                        <br>
                                     </div>
-                                    <div class="col-md-3 mb-3 mb-lg-0">
-                                        <label for="iotroap1dest">Apellido1:</label>
-                                        <input type="text" class="form-control input-b" id="iotroap1dest" name="iotroap1dest" onchange="fnupperfg(this)" placeholder="Apellido1">
-                                    </div>
-                                    <div class="col-md-3 mb-3 mb-lg-0">
-                                        <label for="iotroap2dest">Apellido2:</label>
-                                        <input type="text" class="form-control input-b" id="iotroap2dest" name="iotroap2dest" onchange="fnupperfg(this)" placeholder="Apellido2">
-                                    </div>
-                                    <br>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="_adddestdiv" style="display: none;">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+
+                            <button type="button" id="btnadddest" class="btn btn-link btnadddest"> <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-fill-add" viewBox="0 0 16 16">
+                                <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                <path d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4"/>
+                                </svg>    Agregar destinatario</button>
+
+
+                            <button type="button" id="btnremoveall" class="btn btn-link btnremoveall"> 
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                                </svg>    Quitar todos</button>
+
+                        </div>
+                        <div class="_adddestcont">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr/>
+
+
+
                 <div class="form-group row">
                     <div class="col-md-6">
                         <label for="icbonomrec">Turnado a:</label>
@@ -490,30 +528,65 @@
             });
 
 
+            //btnremoveall
+            $('.btnremoveall').click(function () {
+                $('._adddestcont').html('');
+
+                cuentadest = 0;
+            });
 
 
+            //btnadddest
+            $('.btnadddest').click(function () {
+                cuentadest++;
 
+                //sinue
+                //alert('lol')
+                //_adddestcont
+                //$('._adddestcont').load('_adddest.jsp?valor=1');
+
+
+                var content;
+                $.get('_adddest.jsp?item=' + cuentadest, function (data) {
+                    content = data;
+                    $('._adddestcont').append(data);
+                });
+
+            });
+            //
+            //
             //CC
             $('#chk-cc').click(function () {
-                $('.otrodestinatarioname').hide();
-                // $('#cbodeptodirigido').selectpicker('refresh');
-                // console.log($(this).attr('id'))
+                //_adddestdiv
                 if ($('#chk-cc').prop('checked')) { // es copia para la dirección médica otro serv
-                    // alert('ESTA MARCADO');
-                    $('#divdepto_destmedica').hide();
-                    $('#divdepto_destotro').show();
-                    $('#cbodepto_dest').selectpicker('val', '0');
-                    $('#divcbodestinatario').load('../consultas/cboUsuariosdest.jsp?valor=0');
-                    $('#cbonomdest').val('-1');
-                    // cbonomdest
+                    $('._adddestdiv').show();
                 } else {
-                    // alert('NOOOO  ESTA MARCADO'); //  para la direccion médica
-                    $('#divdepto_destmedica').show();
-                    $('#divdepto_destotro').hide();
-                    $('#divcbodestinatario').load('../consultas/cboUsuariosdest.jsp?valor=2000');
-                    $('#cbonomdest').val('-1');
+                    $('._adddestdiv').hide();
+                    cuentadest = 0;
+                    $('._adddestcont').html('');
                 }
             });
+
+//            $('#chk-cc').click(function () {
+//                $('.otrodestinatarioname').hide();
+//                // $('#cbodeptodirigido').selectpicker('refresh');
+//                // console.log($(this).attr('id'))
+//                if ($('#chk-cc').prop('checked')) { // es copia para la dirección médica otro serv
+//                    // alert('ESTA MARCADO');
+//                    $('#divdepto_destmedica').hide();
+//                    $('#divdepto_destotro').show();
+//                    $('#cbodepto_dest').selectpicker('val', '0');
+//                    $('#divcbodestinatario').load('../consultas/cboUsuariosdest.jsp?valor=0');
+//                    $('#cbonomdest').val('-1');
+//                    // cbonomdest
+//                } else {
+//                    // alert('NOOOO  ESTA MARCADO'); //  para la direccion médica
+//                    $('#divdepto_destmedica').show();
+//                    $('#divdepto_destotro').hide();
+//                    $('#divcbodestinatario').load('../consultas/cboUsuariosdest.jsp?valor=2000');
+//                    $('#cbonomdest').val('-1');
+//                }
+//            });
             //Departamentop
             $("#cbodepto_dest").change(function () {
                 var id = $(this).val();
@@ -533,21 +606,36 @@
                 success: function (data) {
                     // alert("aquiiiiiiiiii");
                     if (data.done === 0) {
-                        elemento = data.elemento;
-                        alert(data.mensaje);
-                        //   alert(elemento);
-                        $('#' + elemento).trigger('focus');
-                        $('html, body').animate({scrollTop: $('#' + elemento).offset().top - 86}, 15);
+
+                        let result = data.elemento.includes("|");
+
+
+                        if (result) {
+                            const words = data.elemento.split('|');
+                            alert(words[1])
+                            var vindex = words[1] -1;
+                            var ell = $('._adddestcont').children('.card').eq(vindex).find('.clcbodepto');
+                            ell.trigger('focus');
+                            $('html, body').animate({scrollTop: $('#' + ell).offset().top - 86}, 15);                            
+                             //$('#' + elemento).trigger('focus');
+
+                        } else {
+                            elemento = data.elemento;
+                            alert(data.mensaje);
+                            //   alert(elemento);
+                            $('#' + elemento).trigger('focus');
+                            $('html, body').animate({scrollTop: $('#' + elemento).offset().top - 86}, 15);
+                        }
                     } else {
                         id_oficio = data.id_oficio;
-                        alert("El oficio se registro correctamente, FOLIO CONSECUTIVO: "+ id_oficio);                      
-                         window.top.location.href = '/medica/oficios/list_oficios_rec.jsp?';
-                         $('.btnguardar').attr("disabled", true);
-                         $('.btnguardar').append('<img src="../images/loading.gif" width="11" height="11" alt="" />');
+                        alert("El oficio se registro correctamente, FOLIO CONSECUTIVO: " + id_oficio);
+                        window.top.location.href = '/medica/oficios/list_oficios_rec.jsp?';
+                        $('.btnguardar').attr("disabled", true);
+                        $('.btnguardar').append('<img src="../images/loading.gif" width="11" height="11" alt="" />');
                     }
                 },
                 beforeSubmit: function () {
-                     $('.btnguardar').attr("disabled", false);
+                    $('.btnguardar').attr("disabled", false);
                 }
             });
 

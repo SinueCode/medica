@@ -8,7 +8,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%
-    String sFiltro = " and DATE_FORMAT(O.fecha_recepcion,'%Y%m%d') between '" + request.getParameter("fi").toString().trim() + "' and  '" + request.getParameter("ff").toString().trim() + "' ";
+    String sFiltro = " where DATE_FORMAT(O.fecha_recepcion,'%Y%m%d') between '" + request.getParameter("fi").toString().trim() + "' and  '" + request.getParameter("ff").toString().trim() + "' ";
     // System.out.println("llega@@@@@@@@@@@@@@@    " +sFiltro);
 %> 
 <!DOCTYPE html>
@@ -28,7 +28,11 @@
     , O.nom_remitente_txt
     , O.id_clasif
     , O.id_sub_clasif
-    , C.cdescripcion AS carpeta
+    , IFNULL(C.cdescripcion, " ")
+    
+ 
+    
+   -- , C.cdescripcion AS carpeta
     , asunto
     , O.observaciones
     , IF(O.cc = 1, "C.C.", " ") as CC
@@ -39,11 +43,10 @@
     , O.fecha_alta as fecha_captura
     , PD.cdescripcion as personal_recibe
     , O.cstatus
-    from of_recepcion O , of_ctl_personal_dm PD , of_ctl_archiv_carpeta C
-    WHERE PD.id 
-    AND PD.id = O.id_personal_recibe 
-    AND C.id_carpeta = O.id_carpeta 
-
+    from of_recepcion O LEFT JOIN of_ctl_archiv_carpeta C
+    on  O.id_carpeta = C.id_carpeta    
+    LEFT JOIN of_ctl_personal_dm PD 
+    on  PD.id = O.id_personal_recibe
     <%=sFiltro%>
     --  and O.cc != 1
     order by num_folio desc

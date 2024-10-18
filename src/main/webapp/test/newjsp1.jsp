@@ -8,7 +8,10 @@
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -54,9 +57,24 @@
             --  and O.cc != 1
             order by num_folio desc
         </sql:query>
-            
-            
-            
+        <c:forEach var="resultados" begin="0" items="${qoficiosrec.rowsByIndex}">
+
+
+        </c:forEach>
+        <div class="card">
+            <p:dataTable id="xd" var="qoficiosrec" value="${qoficiosrec.rowsByIndex}" 
+                         selection="" selectionMode="single">
+                <f:facet name="header">
+                    RightClick to View Options ${qoficiosrec.rows[0]} ${qoficiosrec.rows[0].cdescripcion} ${qoficiosrec.rows[0].idof_recepcion}
+                </f:facet>
+                <p:column headerText="Code">
+                    <h:outputText value="${qoficiosrec.rows[0].idof_recepcion}" />
+                </p:column>
+
+
+            </p:dataTable>
+
+        </div>
 
 
     </body>

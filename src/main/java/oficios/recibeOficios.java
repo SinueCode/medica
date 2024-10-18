@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -93,8 +94,8 @@ public class recibeOficios extends HttpServlet {
             String fecharecepf = "";
             String fechalimitef = "";
             int nom_destinatario = 0;
-            int id_oficio = 0;            
-            int id_oficiomax =0;
+            int id_oficio = 0;
+            int id_oficiomax = 0;
             //****************************** DESTINATARIO *******************************************
 
             if (request.getParameter("chk-correo") == null) {
@@ -144,7 +145,7 @@ public class recibeOficios extends HttpServlet {
                 cc = "1";
                 id_depto_destin = Integer.parseInt(request.getParameter("cbodepto_dest"));
             }
-
+//DESCOMENTAR
 //****************************** DESTINATARIO *******************************************
             if (request.getParameter("chk-sn") == null) {  //TIENE NÚMERO DE OFICIO   
                 if (valida) {
@@ -360,30 +361,6 @@ public class recibeOficios extends HttpServlet {
                     }
                 }
             }
-            //****************************** DESTINATARIO *******************************************
-            if (request.getParameter("chk-cc") == null) { //PARA DIR MÉDICA
-                if (valida) {
-                    resultSet = null;
-                    resultSet = statement.executeQuery("select clave, cdescripcion from ctl_departamentos  where clave = " + request.getParameter("cbodepto_destm") + "");
-                    if (resultSet.next()) {
-                    } else {
-                        valida = false;
-                        mensaje = "Seleccione departamento del destinatario.";
-                        elemento = "cbodepto_destm";
-                    }
-                }
-            } else { // CON COPIA
-                if (valida) {
-                    resultSet = null;
-                    resultSet = statement.executeQuery("select clave, cdescripcion from ctl_departamentos  where clave = " + request.getParameter("cbodepto_dest") + "");
-                    if (resultSet.next()) {
-                    } else {
-                        valida = false;
-                        mensaje = "Seleccione departamento del destinatario.";
-                        elemento = "cbodepto_dest";
-                    }
-                }
-            }
 
             if (valida) { //  iotrondest  iotroap1dest  iotroap2dest
                 resultSet = null;
@@ -426,6 +403,99 @@ public class recibeOficios extends HttpServlet {
                 }
             }
 
+            //chk-cc  C.C. A DIR. MÉDICA
+            if (valida) { //cbonomdestcc
+                if (request.getParameter("chk-cc") != null) {
+                    //System.out.println("@@@@@@@@@   " + request.getParameter("chk-cc"));
+                    //System.out.println("@@@@@@@@@   1");
+                    //si esta marcado copia validamos que exista al menos un destinatario con sus datos llenos
+
+                    String[] arrDeptos = request.getParameterValues("cbodeptod");
+                    int cuentaindex = 0;
+                    if (arrDeptos != null) {
+                        for (String desc : arrDeptos) {
+
+                            if (valida) {
+                                cuentaindex++;
+
+                                if (desc.trim().equals("") || desc.trim().equals("0")) {
+                                    valida = false;
+                                    mensaje = "Seleccione destinatario.";
+                                    elemento = "clcbodepto|" + cuentaindex;
+                                }
+
+                                if (valida) {
+                                    if (request.getParameter("cbonomdestcc_" + desc).equals("-1")) {
+                                        valida = false;
+                                        mensaje = "Seleccione Nombre.";
+                                        elemento = "cbonomdestcc_" + desc;
+
+                                    }
+                                }
+
+                                if (valida) {
+
+                                    if (request.getParameter("cbonomdestcc_" + desc).equals("3")) {
+                                        //VALIDAMOS NOMBRE
+
+                                        if (request.getParameter("iotrondest_" + desc) != null && !request.getParameter("iotrondest_" + desc).toString().trim().equals("")) {
+                                            if (!Pattern.matches("^([A-Za-zÁÉÍÓÚñáéíóúÑ]{0}?[A-Za-zÁÉÍÓÚñáéíóúÑ\\']+[\\s]?)+([A-Za-zÁÉÍÓÚñáéíóúÑ]{0}?[A-Za-zÁÉÍÓÚñáéíóúÑ\\'])+[\\s]?([A-Za-zÁÉÍÓÚñáéíóúÑ]{0}?[A-Za-zÁÉÍÓÚñáéíóúÑ\\'])?$", request.getParameter("iotrondest_" + desc).toString().trim())) {
+                                                valida = false;
+                                                mensaje = "Nombre incorrecto";
+                                                elemento = "iotrondest_" + desc;
+                                            }
+                                        } else {
+                                            valida = false;
+                                            mensaje = "Seleccione Nombre.";
+                                            elemento = "iotrondest_" + desc;
+                                        }
+
+                                        //VALIDAMOS APELLIDO1
+                                        if (valida) {
+                                            if (request.getParameter("iotroap1dest_" + desc) != null && !request.getParameter("iotroap1dest_" + desc).toString().trim().equals("")) {
+                                                if (!Pattern.matches("^([A-Za-zÁÉÍÓÚñáéíóúÑ]{0}?[A-Za-zÁÉÍÓÚñáéíóúÑ\\']+[\\s]?)+([A-Za-zÁÉÍÓÚñáéíóúÑ]{0}?[A-Za-zÁÉÍÓÚñáéíóúÑ\\'])+[\\s]?([A-Za-zÁÉÍÓÚñáéíóúÑ]{0}?[A-Za-zÁÉÍÓÚñáéíóúÑ\\'])?$", request.getParameter("iotroap1dest_" + desc).toString().trim())) {
+                                                    valida = false;
+                                                    mensaje = "Apellido 1 incorrecto";
+                                                    elemento = "iotroap1dest_" + desc;
+                                                }
+                                            } else {
+                                                valida = false;
+                                                mensaje = "Seleccione Apellido 1.";
+                                                elemento = "iotroap1dest_" + desc;
+                                            }
+                                        }
+                                        //VALIDAMOS APELLIDO2
+                                        if (valida) {
+
+                                            if (request.getParameter("iotroap2dest_" + desc) != null && !request.getParameter("iotroap2dest_" + desc).toString().trim().equals("")) {
+                                                if (!Pattern.matches("^([A-Za-zÁÉÍÓÚñáéíóúÑ]{0}?[A-Za-zÁÉÍÓÚñáéíóúÑ\\']+[\\s]?)+([A-Za-zÁÉÍÓÚñáéíóúÑ]{0}?[A-Za-zÁÉÍÓÚñáéíóúÑ\\'])+[\\s]?([A-Za-zÁÉÍÓÚñáéíóúÑ]{0}?[A-Za-zÁÉÍÓÚñáéíóúÑ\\'])?$", request.getParameter("iotroap2dest_" + desc).toString().trim())) {
+                                                    valida = false;
+                                                    mensaje = "Apellido 2 incorrecto";
+                                                    elemento = "iotroap2dest_" + desc;
+                                                }
+                                            } else {
+                                                valida = false;
+                                                mensaje = "Seleccione Apellido 2.";
+                                                elemento = "iotroap2dest_" + desc;
+                                            }
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+                    } else {
+                        valida = false;
+                        mensaje = "Seleccione al menos un destinatario.";
+                        elemento = "btnadddest";
+                    }
+
+                }
+            }
+
             if (valida) { //cbodepto_tur
                 resultSet = null;
                 resultSet = statement.executeQuery("select clave, cdescripcion from ctl_departamentos  where clave = " + request.getParameter("cbodepto_tur") + "");
@@ -462,6 +532,7 @@ public class recibeOficios extends HttpServlet {
                     elemento = "ifecha_limresp";
                 }
             }
+
             if (!valida) {
                 map.put("done", 0);
                 map.put("mensaje", mensaje);
@@ -488,23 +559,7 @@ public class recibeOficios extends HttpServlet {
                         nom_remit = resultSet.getInt(1);
                     }
                 }
-                if (request.getParameter("cbonomdest").equals("3")) {  //otro nombre de destinatario
-                    query3 = (" INSERT INTO of_usr_oficios ( nombre, apellido1, apellido2, ccosto , cstatus) VALUES "
-                            + " ( '" + nombredest_of + "' "
-                            + " , '" + ap1dest_of + "' "
-                            + " , '" + ap2dest_of + "'"
-                            + " , " + id_depto_destin + " "
-                            + " , 1 "
-                            + " ) ");
-                    //System.out.println(query3);
-                    pstmt = connx.prepareStatement(query3);
-                    pstmt.executeUpdate();
-                    resultSet = null;
-                    resultSet = statement.executeQuery(" SELECT @@IDENTITY ");
-                    if (resultSet.next()) {
-                        nom_destinatario = resultSet.getInt(1);
-                    }
-                }
+
                 //-------
                 resultSet = null;
                 resultSet = statement.executeQuery("select IFNULL(MAX(idof_recepcion) + 1,1) as max from of_recepcion where annio = " + annio_of);
@@ -522,7 +577,7 @@ public class recibeOficios extends HttpServlet {
                         + " , id_dpto_destinat, id_nom_destinat,id_depto_turnadoa "
                         + " , fecha_limiter, id_alta_ausuario,fecha_alta, cstatus) VALUES"
                         + " ( " + id_oficiomax + " "
-                         + " ," + snf + ""
+                        + " ," + snf + ""
                         + " ," + id_dep_rem + ""
                         + " ," + num_of + " "
                         + " ," + annio_of + ""
@@ -547,14 +602,52 @@ public class recibeOficios extends HttpServlet {
                         + " , now() "
                         + " , 'P'"
                         + " )");
-                System.out.println(query);
+                //System.out.println(query);
                 pstmt = connx.prepareStatement(query);
                 pstmt.executeUpdate();
-                resultSet = null;
+//                resultSet = null;
 //                resultSet = statement.executeQuery(" SELECT @@IDENTITY ");
 //                if (resultSet.next()) {
 //                    id_oficio = resultSet.getInt(1);
 //                }
+
+                //SE INSERTAN LOS MULTIPLES DATOS PARA DESTINATARIO
+                String[] arrDeptos = request.getParameterValues("cbodeptod");
+                if (arrDeptos != null) {
+                    for (String desc : arrDeptos) {
+
+                        if (request.getParameter("cbonomdestcc_" + desc).equals("3")) {//otro nombre de destinatario
+                            query3 = (" INSERT INTO of_usr_oficios ( nombre, apellido1, apellido2, ccosto , cstatus) VALUES "
+                                    + " ( '" + request.getParameter("iotrondest_" + desc).trim() + "' "
+                                    + " , '" + request.getParameter("iotroap1dest_" + desc).trim() + "' "
+                                    + " , '" + request.getParameter("iotroap2dest_" + desc).trim() + "'"
+                                    + " , " + desc + " "
+                                    + " , 1 "
+                                    + " ) ");
+                            //System.out.println(query3);
+                            pstmt = connx.prepareStatement(query3);
+                            pstmt.executeUpdate();
+                            resultSet = null;
+                            resultSet = statement.executeQuery(" SELECT @@IDENTITY ");
+                            if (resultSet.next()) {
+                                nom_destinatario = resultSet.getInt(1);
+                            }
+                        } else {
+                            nom_destinatario = Integer.parseInt(request.getParameter("cbonomdestcc_" + desc).trim());
+                        }
+
+                        query3 = (" INSERT INTO of_recepcion_dest ( idof_recepcion, id_depto, id_nombre) VALUES "
+                                + " ( " + id_oficiomax + " "
+                                + " , " + desc + " "
+                                + " , " + nom_destinatario + ""
+                                + " ) ");
+                        //System.out.println(query3);
+                        pstmt = connx.prepareStatement(query3);
+                        pstmt.executeUpdate();
+
+                    }
+                }
+
                 map.put("id_oficio", id_oficiomax);
                 map.put("done", 1);
             }
@@ -566,7 +659,7 @@ public class recibeOficios extends HttpServlet {
 
         } catch (Exception e) {
 
-           System.out.println("ERROR ---- " + e);
+            System.out.println("ERROR ---- " + e);
         } finally {
             DbUtils.closeQuietly(resultSet);
             DbUtils.closeQuietly(statement);
