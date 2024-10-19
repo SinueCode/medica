@@ -64,11 +64,16 @@ public class recibeOficios extends HttpServlet {
         PreparedStatement pstmt = null;
         try {
             boolean valida = true;
+
+            boolean confirm = false;
             String query = "";
             String query2 = "";
             String query3 = "";
 
             String qIdDest = "";
+
+            String iconsecutivo_duplicado = "";
+            int consecutivo = 0;
 
             String mensaje = "";
             String elemento = "";
@@ -158,6 +163,22 @@ public class recibeOficios extends HttpServlet {
                         elemento = "cbodeptoremit";
                     }
                 }
+
+                //SI ES 1010 JURIDICO SE VALIDA cbojur
+                if (valida) {
+                    if (request.getParameter("cbodeptoremit").trim().equals("1010")) {
+
+                        resultSet = null;
+                        resultSet = statement.executeQuery(" select id from of_tipo_juridico where id = " + request.getParameter("cbojur") + "");
+                        if (resultSet.next()) {
+                        } else {
+                            valida = false;
+                            mensaje = "Opción incorrecta.";
+                            elemento = "cbojur";
+                        }
+                    }
+                }
+
                 if (valida) {
                     if (request.getParameter("iconsecutivo") == null || request.getParameter("iconsecutivo").trim().equals("")) {
                         valida = false;
@@ -173,16 +194,16 @@ public class recibeOficios extends HttpServlet {
                         elemento = "cboannio";
                     }
                 }
-
                 //validar que el consecutivo no exista ya en la base de datos
                 if (valida) {
                     resultSet = null;
-                    resultSet = statement.executeQuery("select idof_recepcion from of_recepcion where num_of = " + request.getParameter("iconsecutivo") + " and  annio ='" + request.getParameter("cboannio") + "' and id_dpto_remit =" + request.getParameter("cbodeptoremit") + "");
-                    //System.out.println("select idof_recepcion from of_recepcion where num_of = " + request.getParameter("iconsecutivo") + " and  annio ='" + request.getParameter("cboannio") + "' and id_dpto_remit =" + request.getParameter("cbodeptoremit") + "");
-                    while (resultSet.next()) {
-                        valida = false;
-                        mensaje = "El oficio ya existe, verifica.";
-                        elemento = "iconsecutivo";
+                    resultSet = statement.executeQuery("select  IFNULL(MAX(num_folio_consec) + 1,1) from of_recepcion where num_of = " + request.getParameter("iconsecutivo") + " and  annio = " + request.getParameter("cboannio") + " and id_dpto_remit =" + request.getParameter("cbodeptoremit") + "");
+                    if (resultSet.next()) {
+                        consecutivo = Integer.parseInt(resultSet.getString(1));
+                        if (!resultSet.getString(1).trim().equals("1")) {
+                            iconsecutivo_duplicado = request.getParameter("iconsecutivo");
+                            confirm = true;
+                        }
                     }
                 }
 
@@ -325,16 +346,25 @@ public class recibeOficios extends HttpServlet {
                     elemento = "cbosubcodigo_arch";
                 }
             }
+//            if (valida) {
+//                resultSet = null;
+//                resultSet = statement.executeQuery("select id_carpeta, cdescripcion from of_ctl_archiv_carpeta where id_carpeta = '" + request.getParameter("cbocarpeta_arch") + "' ");
+//                if (resultSet.next()) {
+//                } else {
+//                    valida = false;
+//                    mensaje = "Seleccione la carpeta.";
+//                    elemento = "cbocarpeta_arch";
+//                }
+//            }
+
+            //ARCHIVADO
+            String sarchivado = "0";
             if (valida) {
-                resultSet = null;
-                resultSet = statement.executeQuery("select id_carpeta, cdescripcion from of_ctl_archiv_carpeta where id_carpeta = '" + request.getParameter("cbocarpeta_arch") + "' ");
-                if (resultSet.next()) {
-                } else {
-                    valida = false;
-                    mensaje = "Seleccione la carpeta.";
-                    elemento = "cbocarpeta_arch";
+                if (request.getParameter("iarchivado") != null && request.getParameter("iarchivado").toString().equals("1")) {
+                    sarchivado = "1";
                 }
             }
+
             if (valida) {
                 if (request.getParameter("txtasunto").trim().equals("")) {
                     // if (global.cFunciones.charespecial(request.getParameter("txtasunto")).length() > 15000) {
@@ -537,6 +567,9 @@ public class recibeOficios extends HttpServlet {
                 map.put("done", 0);
                 map.put("mensaje", mensaje);
                 map.put("elemento", elemento);
+                map.put("confirma", confirm);
+                map.put("conf_folio", iconsecutivo_duplicado);
+
             } else {
                 fecharecepf = global.cFunciones.f131_to_126(request.getParameter("ifecharecep").trim());
                 fechalimitef = global.cFunciones.f131_to_126(request.getParameter("ifecha_limresp").trim());
@@ -559,7 +592,9 @@ public class recibeOficios extends HttpServlet {
                         nom_remit = resultSet.getInt(1);
                     }
                 }
+                //-- si el número de oficio ya existe que se genere un consecutivo
 
+                ///--------------
                 //-------
                 resultSet = null;
                 resultSet = statement.executeQuery("select IFNULL(MAX(idof_recepcion) + 1,1) as max from of_recepcion where annio = " + annio_of);
@@ -568,11 +603,11 @@ public class recibeOficios extends HttpServlet {
                 }
                 //-------
 
-                query = (" INSERT INTO of_recepcion (idof_recepcion, sn, id_dpto_remit, num_of, annio"
+                query = (" INSERT INTO of_recepcion (idof_recepcion, sn, id_dpto_remit, num_of, num_folio_consec , annio"
                         + " , correo, num_referencia, fecha_recepcion, id_personal_recibe"
                         + " , id_nom_remitente"
                         + ",nom_remitente_txt,dpto_remitente_txt"
-                        + " , id_clasif, id_sub_clasif, id_carpeta"
+                        + " , id_clasif, id_sub_clasif, id_carpeta, archivado "
                         + ", asunto, observaciones , cc "
                         + " , id_dpto_destinat, id_nom_destinat,id_depto_turnadoa "
                         + " , fecha_limiter, id_alta_ausuario,fecha_alta, cstatus) VALUES"
@@ -580,6 +615,7 @@ public class recibeOficios extends HttpServlet {
                         + " ," + snf + ""
                         + " ," + id_dep_rem + ""
                         + " ," + num_of + " "
+                        + " ," + consecutivo + " "
                         + " ," + annio_of + ""
                         + " , " + correo + " "
                         + " , '" + request.getParameter("iotro_numof").toUpperCase() + "'"
@@ -590,7 +626,8 @@ public class recibeOficios extends HttpServlet {
                         + " , '" + txt_dep_rem + "'"
                         + " , '" + request.getParameter("cbocodigo_arch") + "'"
                         + " , '" + request.getParameter("cbosubcodigo_arch") + "'"
-                        + " , " + request.getParameter("cbocarpeta_arch") + ""
+                        + " , " + request.getParameter("cbocarpeta_arch") + "" //
+                        + " , '" + sarchivado + "'" //
                         + " , '" + request.getParameter("txtasunto").toUpperCase() + "'"
                         + " , '" + request.getParameter("txtobservaciones").toUpperCase() + "'"
                         + " , " + cc + ""
@@ -602,7 +639,7 @@ public class recibeOficios extends HttpServlet {
                         + " , now() "
                         + " , 'P'"
                         + " )");
-                //System.out.println(query);
+                System.out.println(query);
                 pstmt = connx.prepareStatement(query);
                 pstmt.executeUpdate();
 //                resultSet = null;

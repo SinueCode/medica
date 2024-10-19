@@ -76,13 +76,16 @@
                 <c:set var="freferencia" value="${conactualdate.rows[0].freferencia}"/>     
                 <div class="form-group col-md">
                     <div class="form-check">
-                        <label>S/N</label>
+                        <label for="chk-sn">S/N</label>
                         <input class="form-check-input" type="checkbox" value="" id="chk-sn" name="chk-sn">                           
                     </div> 
                 </div>
                 <div id="divnumof" class="divnumof"> 
                     <div class="form-group col-md">
                         <b> No. de oficio:</b>
+                        <div class="_divoicq">
+                            HIM /12200 / 
+                        </div>
                         <select id='cbodeptoremit' name='cbodeptoremit' class="selectpicker form-control" style=" height: 55px;" data-show-subtext="false" data-live-search="true" data-width="85px" height="200px">
                             <option value="0" selected >Dpto.</option>
                             <sql:query var="qareas" dataSource="jdbc/MEDICA">
@@ -94,9 +97,20 @@
                             <c:forEach var="areas" begin="0" items="${qareas.rowsByIndex}">
                                 <option data-subtext="${areas[1]}" value="${areas[0]}">${areas[0]}</option>
                             </c:forEach>
-                        </select> /
-                        <input type="text" class="form-control ioficio onlyi input-b" id="iconsecutivo" name="iconsecutivo" placeholder="# Of." maxlength="4" onkeypress="return solonumeros(event, 'numemp');">  
-                        <select id="cboannio" name="cboannio" class="selectpicker form-control" data-live-search="false" style="" style="" data-width="85px">
+                        </select> 
+
+                        <div class="_divjuridico">
+                            / <select id="cbojur" name="cbojur" class="selectpicker form-control " data-live-search="false" style="" style="" data-width="85px">
+                                <sql:query var="qjur" dataSource="jdbc/MEDICA">
+                                    SELECT id, cdescripcion from of_tipo_juridico
+                                </sql:query>
+                                <c:forEach var="vjur" begin="0" items="${qjur.rowsByIndex}">
+                                    <option value="${vjur[0]}">${vjur[1]}</option>
+                                </c:forEach>           
+                            </select>           
+                        </div>
+                        / <input type="text" class="form-control ioficio onlyi input-b" id="iconsecutivo" name="iconsecutivo" autocomplete="off" placeholder="# Of." maxlength="4" onkeypress="return solonumeros(event, 'numemp');">  
+                        / <select id="cboannio" name="cboannio" class="selectpicker form-control" data-live-search="false" style="" style="" data-width="85px">
                             <option value="0" selected >Año</option>
                             <sql:query var="qannio" dataSource="jdbc/MEDICA">
                                 SELECT DATE_FORMAT(now(), '%Y') AS 'anio' UNION SELECT DATE_FORMAT( DATE_ADD(now(), INTERVAL -1 YEAR), '%Y') AS 'anio' 
@@ -241,7 +255,12 @@
                         </div>
                     </div> 
                     <div class="col-md-6">
+                        <label for="icbosubcodigo_arch"></label> 
 
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="iarchivado" name="iarchivado" value="1">
+                            <label class="form-check-label" for="iarchivado">Archivado</label>
+                        </div>
                     </div>                    
                 </div>
 
@@ -409,6 +428,7 @@
                     , formatDate: 'd/m/Y H:i'
                     , autoclose: true
                     , step: 1
+                    , closeOnDateSelect: true
                 });
                 $('#ifecha_limresp').datetimepicker({
                     format: 'd/m/Y H:i',
@@ -418,6 +438,7 @@
                     , formatDate: 'd/m/Y H:i'
                     , autoclose: true
                     , step: 1
+                    , closeOnDateSelect: true
                 });
             });
             $('#divcbodestinatario').load('../consultas/cboUsuariosdest.jsp?valor=2000'); //destinatario dirección médica
@@ -440,6 +461,11 @@
 
 
             $("#cbodeptoremit").change(function () {
+                $('._divjuridico').removeClass('_show');
+                $('._divjuridico').addClass('_hide');
+                $('._divoicq').removeClass('_show');
+                $('._divoicq').addClass('_hide');
+                $('._oicqvalue').html('');
                 var id = $(this).val();
                 var option = $('option:selected', this).attr('data-subtext');
                 $('#dep_remitente').val(option);
@@ -447,6 +473,24 @@
                     //alert(id);
                     $('#divcboremitente').load('../consultas/cboUsuarios.jsp?valor=' + id);
                 });
+                //opciones para juridico / OIC / QUEJAS
+                if (id === '1010') { //_divjuridico
+                    $('._divjuridico').removeClass('_hide');
+                    $('._divjuridico').addClass('_show');
+                }
+                //_divoicq //_oicqvalue
+                if (id === '7000') { //_divjuridico
+                    $('._divoicq').removeClass('_hide');
+                    $('._divoicq').addClass('_show');
+                    //$('._oicqvalue').html('7000');
+                }
+                if (id === '7030') { //_divjuridico
+                    $('._divoicq').removeClass('_hide');
+                    $('._divoicq').addClass('_show');
+                    //$('._oicqvalue').html('7030');
+                }
+
+
                 // limpa          
                 $("#iconsecutivo").val(''); //num de oficio
                 $('#cboannio').selectpicker('val', '0'); //año                    
@@ -597,27 +641,27 @@
                 $('.otrodestinatarioname').hide();
             });
 
-
-
-
-
-
             $('#frm_RegOficio').ajaxForm({
                 success: function (data) {
                     // alert("aquiiiiiiiiii");
                     if (data.done === 0) {
 
+                        //cuando el folio del oficio ya existe
+                        conf = data.confirma;
+                        conf_folio = data.conf_folio;
+                        if (conf) {
+                            alert("El folio," + conf_folio + ", ya existe para este departamento, se le agregará un consecutivo.");
+                        }
+
                         let result = data.elemento.includes("|");
-
-
                         if (result) {
                             const words = data.elemento.split('|');
                             alert(words[1])
-                            var vindex = words[1] -1;
+                            var vindex = words[1] - 1;
                             var ell = $('._adddestcont').children('.card').eq(vindex).find('.clcbodepto');
                             ell.trigger('focus');
-                            $('html, body').animate({scrollTop: $('#' + ell).offset().top - 86}, 15);                            
-                             //$('#' + elemento).trigger('focus');
+                            $('html, body').animate({scrollTop: $('#' + ell).offset().top - 86}, 15);
+                            //$('#' + elemento).trigger('focus');
 
                         } else {
                             elemento = data.elemento;
@@ -627,6 +671,7 @@
                             $('html, body').animate({scrollTop: $('#' + elemento).offset().top - 86}, 15);
                         }
                     } else {
+                        // alert(data.mensaje);
                         id_oficio = data.id_oficio;
                         alert("El oficio se registro correctamente, FOLIO CONSECUTIVO: " + id_oficio);
                         window.top.location.href = '/medica/oficios/list_oficios_rec.jsp?';

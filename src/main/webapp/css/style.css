@@ -2530,3 +2530,16 @@ notifications-1b-in-a{
     height: 100% !important;
     z-index: 1199;
 }
+._divoicq{
+    display: none!important;
+}
+._divjuridico{
+    display: none!important;
+}
+
+._hide{
+    display: none!important;
+}
+._show{
+    display: inline-block!important;
+}
