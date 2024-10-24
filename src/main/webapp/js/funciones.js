@@ -36,7 +36,7 @@ var fnmedica = {
         });
     },
 
-    marca_atendido: function (idfolio) {     
+    marca_atendido: function (idfolio) {
         var idhosp = $(this).attr('data');
         $('.titlea').html('Oficio atendido');
         $('.modaledit_cont').load('wmarcar_atendido.jsp?idfolio=' + idfolio);
@@ -2110,4 +2110,36 @@ function soloNombresConAcen(e) {
     patron = /[a-zA-ZÑÁÉÍÓÚñáéíóú ]/;
     te = String.fromCharCode(tecla);
     return patron.test(te);
+}
+
+var fntables = {
+
+    init: function () {
+
+
+        $("[id*='sub-menu-medica']").each(function (el, index) {
+            //alert('lola')
+            var parent, dropdownMenu, left, top;
+            $(this).on('show.bs.dropdown', function () {
+                parent = $(this).parent();
+                dropdownMenu = $(this).find('.dropdown-menu');
+                left = dropdownMenu.offset().left - $(window).scrollLeft();
+                top = dropdownMenu.offset().top - $(window).scrollLeft();
+
+                $('body').append(dropdownMenu.css({
+                    position: 'fixed',
+                    left: left,
+                    top: top
+                }).detach());
+            })
+
+            $(this).on('hidden.bs.dropdown', function () {
+                $(this).append(dropdownMenu.css({
+                    position: 'absolute', left: false, top: false
+                }).detach());
+            })
+        })
+
+    }
+
 }

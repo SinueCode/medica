@@ -75,13 +75,13 @@
                                     <input type="text" class="form-control input-b" id="ifecharecfin" name="ifecharecfin" placeholder="F. de recepción" >
                                 </div> 
                                 <div class="col-md-2">
-                                     <br>
+                                    <br>
                                     <input type="submit" class="btn btn-primary btnguardar" value="Buscar">
-                                   
+
                                 </div>
                                 <div class="col-md-4">
-<!--                                    <br>
-                                    <input type="submit" class="btn btn-primary btnguardar" value="Buscar">-->
+                                    <!--                                    <br>
+                                                                        <input type="submit" class="btn btn-primary btnguardar" value="Buscar">-->
                                 </div>   
                                 <br>
                             </div>                          
@@ -92,6 +92,8 @@
             <div class="row" id="tablita"> </div>               
         </div>
         <script type="text/javascript">
+
+           
             sf1 = '${fecha112}';
             sf2 = '${fecha112}';
 

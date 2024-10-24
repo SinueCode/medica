@@ -39,6 +39,41 @@
     <body>
         <jsp:include page="../includes/menu.jsp" />
         <!-- Page Content -->
+        <div class="modal fade" id="modalfinish" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Modal 1</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body bodyfinish">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary doclose" data-bs-dismiss="modal">Cerrar</button>
+                        <button class="btn btn-primary" data-bs-target="#modaladj" data-bs-toggle="modal">Adjuntar archivos</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modaladj" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Adjuntar</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="frmattach" method="POST" class="" enctype="multipart/form-data"  action="<%=request.getContextPath()%>/u/uploadFiles?id_oficio=">
+                            <input type="file" class="form-control" style="height:auto;" id="ifileattach" name="archivos" multiple="">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary doclose" data-bs-dismiss="modal">Terminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="container">            
             <div class="row ">
                 <div class="col-md-4 mb-4 mb-lg-0">
@@ -122,7 +157,6 @@
                     </div>
                 </div>
                 <div id="divnumof_sin" class="form-group row divnumof_sin"  style="display: none"> 
-
                     <div class="form-group col-md-4">
                         <b> &nbsp;</b>
                         <div class="form-check">
@@ -131,7 +165,7 @@
                         </div> 
                     </div>
                     <div class="form-group col-md-4">
-                        <b> No. de referencia:</b>
+                        <b> No. de referencia*:</b>
                         <svg data-toggle="tooltip" data-placement="right" title="Para los correos recibidos se generará un núm de referencia consecutivo" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
                         <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
                         </svg>
@@ -140,11 +174,11 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-4">
-                        <label for="ifecharecep">Fecha de recepción:</label>
+                        <label for="ifecharecep">Fecha de recepción*:</label>
                         <input type="text" class="form-control input-b" id="ifecharecep" name="ifecharecep" autocomplete="off" placeholder="Fecha de recepción" >
                     </div>
                     <div class="col-md-4">
-                        <label for="icbonomrec">Nombre de quien recibe:</label>
+                        <label for="icbonomrec">Nombre de quien recibe*:</label>
                         <select id="cboperdm" name="cboperdm" class="form-select input-b" data-live-search="true">                            
                             <option value="-1">Seleccione...</option>
                             <sql:query var="qperdm" dataSource="jdbc/MEDICA">
@@ -164,11 +198,11 @@
                 <div id="depto_sn"  style="display: none">
                     <div class="form-group row">
                         <div class="col-md-6">
-                            <label for="dep_remitente">Departamento:</label>
+                            <label for="dep_remitente">Departamento*:</label>
                             <input type="text" class="form-control input-b" id="dep_remitente_sn" name="dep_remitente_sn" style="   text-align: center; ">
                         </div>
                         <div class="col-md-6">
-                            <label for="inomrem">Nombre del remitente:</label>                      
+                            <label for="inomrem">Nombre del remitente*:</label>                      
                             <input type="text" class="form-control input-b" id="nom_remitente_sn" name="nom_remitente_sn" style="   text-align: center; ">
                         </div>
                         <br>
@@ -177,22 +211,29 @@
 
                 <div id="depto_cn">
                     <div class="form-group row">
-                        <div class="col-md-6">
-                            <label for="dep_remitente">Departamento: 
+                        <div class="col-md-5">
+                            <label for="dep_remitente">Departamento*:
                                 <svg data-toggle="tooltip" data-placement="right" title="Seleccione el departamento en el número de oficio" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
                                 <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
                                 </svg>
                             </label>
                             <input type="text" class="form-control input-b" id="dep_remitente" name="dep_remitente"  readonly style=" background: #FFFFFF;   border-style: dashed; cursor: default; font-weight:bold;  text-align: center; ">
                         </div>
-                        <div class="col-md-6">
-                            <label for="inomrem">Nombre del remitente:</label>                      
+                        <div class="col-md-5">
+                            <label for="inomrem">Nombre del remitente*:</label>                      
                             <div id="divcboremitente">
                                 <select style="" name="" id=""  class="form-select input-b disabled" data-live-search="false" style="" style="">
                                     <option value="0">Seleccione...</option>                           
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-2">
+                            <label for="chk-ausencia"></label> 
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="chk-ausencia" name="chk-ausencia" value="">
+                                <label class="form-check-label" for="chk-ausencia">Firma en ausencia</label>
+                            </div>
+                        </div>                        
                         <br>
                         <div id="divotroremitente" class="otroremitentename" style="display: none" >  
                             <br>
@@ -203,15 +244,15 @@
                                 <div class="card-body">                    
                                     <div class="form-group row">
                                         <div class="col-md-3 mb-3 mb-lg-0">
-                                            <label for="iotron">Nombre:</label>
+                                            <label for="iotron">Nombre*:</label>
                                             <input type="text" class="form-control input-b" id="iotron" name="iotron"  onchange="fnupperfg(this)" placeholder="Nombre">
                                         </div>
                                         <div class="col-md-3 mb-3 mb-lg-0">
-                                            <label for="iotroap1">Apellido1:</label>
+                                            <label for="iotroap1">Apellido1*:</label>
                                             <input type="text" class="form-control input-b" id="iotroap1" name="iotroap1" onchange="fnupperfg(this)" placeholder="Apellido1">
                                         </div>
                                         <div class="col-md-3 mb-3 mb-lg-0">
-                                            <label for="iotroap2">Apellido2:</label>
+                                            <label for="iotroap2">Apellido2*:</label>
                                             <input type="text" class="form-control input-b" id="iotroap2" name="iotroap2" onchange="fnupperfg(this)" placeholder="Apellido2">
                                         </div>
                                         <br>
@@ -221,9 +262,15 @@
                         </div>
                     </div>
                 </div>
+                <div id="div_ausencia" class="form-group row div_ausencia" style="display: none"> 
+                    <div class="form-group col-md-4">
+                        <b> Firma por ausencia:</b>                      
+                        <input type="text" class="form-control  input-b " id="nom_ausencia" name="nom_ausencia" placeholder="Nombre completo" maxlength="38">  
+                    </div>
+                </div>
                 <div class="form-group row">
                     <div class="col-md-6">
-                        <label for="icbocodigo_arch">Clasificación:</label>                      
+                        <label for="icbocodigo_arch">Clasificación*:</label>                      
                         <select id="cbocodigo_arch" name="cbocodigo_arch" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">                            
                             <option value="0" selected >Seleccione...</option>
                             <sql:query var="qcodigoar" dataSource="jdbc/MEDICA">
@@ -238,7 +285,7 @@
                     <div class="col-md-6">
                         <div id="divcbosubcod"> 
                             <!--diana diana-->
-                            <label for="icbosubcodigo_arch">Sub-Clasificación:</label> 
+                            <label for="icbosubcodigo_arch">Sub-Clasificación*:</label> 
                             <select id="cbosubcodigo_arch" name="cbosubcodigo_arch" disabled="true" class="selectpicker form-control"  data-show-subtext="true" data-live-search="false" >                            
                                 <option value="0" selected >Sub-Clasif.</option>            
                             </select>
@@ -255,8 +302,7 @@
                         </div>
                     </div> 
                     <div class="col-md-6">
-                        <label for="icbosubcodigo_arch"></label> 
-
+                        <label for="iarchivado"></label> 
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="iarchivado" name="iarchivado" value="1">
                             <label class="form-check-label" for="iarchivado">Archivado</label>
@@ -267,11 +313,11 @@
 
                 <div class="form-group row">
                     <div class="col-md-6">
-                        <label for="txtasunto">Asunto:</label>
+                        <label for="txtasunto">Asunto*:</label>
                         <textarea class="form-control" id="txtasunto" name="txtasunto" rows="3" placeholder="Asunto..."></textarea>
                     </div>
                     <div class="col-md-6">
-                        <label for="exampleFormControlTextarea1">Observaciones</label>
+                        <label for="exampleFormControlTextarea1">Observaciones:</label>
                         <textarea class="form-control" id="txtobservaciones" name="txtobservaciones" rows="3" placeholder="Observaciones..."></textarea>
                     </div>                
                 </div>   
@@ -279,7 +325,6 @@
                 <b>
                     Destinatario:
                 </b>
-
                 <div class="form-group col-md">
                     <div class="form-check">
                         <label for="chk-cc">C.C. A DIR. MÉDICA</label>
@@ -287,13 +332,9 @@
                     </div> 
                 </div>
                 <div class="_show_dirmed">
-
-
                     <div class="form-group row">
-                        <div class="col-md-6">  
-
-                            <label for="icbonomrec">Departamento:</label> <!-- puede ser a la dirección médica o a otro departamento depende de C.C-->
-
+                        <div class="col-md-6">
+                            <label for="icbonomrec">Departamento*:</label> <!-- puede ser a la dirección médica o a otro departamento depende de C.C-->
                             <div id="divdepto_destmedica" >
                                 <select id="cbodepto_destm" name="cbodepto_destm" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true" >                            
                                     <!--                                <option value="0" selected >Dpto.</option>-->
@@ -307,25 +348,25 @@
                                     </c:forEach>
                                 </select>
                             </div>
-                            <div id="divdepto_destotro"  style="display: none">
-                                <select id="cbodepto_dest" name="cbodepto_dest" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">   
-                                    <option value="0" selected >Varios</option>
-                                    <option data-subtext="A TODO EL PERSONAL DEL HIMFG" value="HIMG001">--</option>
-                                    <option data-subtext="A TODOS LOS DIRECTORES, SUBDIRECTORES Y JEFES DE DEPARTAMENTO DEL HIMFG" value="HIMG002">--</option>
-                                    <option value="0" selected >Dpto.</option>
-                                    <sql:query var="qareas_otro" dataSource="jdbc/MEDICA">
-                                        select clave, upper(cdescripcion) cdescripcion from ctl_departamentos 
-                                        where clave != 2000
-                                        order by clave asc
-                                    </sql:query>
-                                    <c:forEach var="areas_otro" begin="0" items="${qareas_otro.rowsByIndex}">
-                                        <option data-subtext="${areas_otro[1]}" value="${areas_otro[0]}">${areas_otro[0]}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
+                            <!--                            <div id="divdepto_destotro"  style="display: none">
+                                                            <select id="cbodepto_dest" name="cbodepto_dest" class="selectpicker form-control"  data-show-subtext="true" data-live-search="true">   
+                                                                <option value="0" selected >Varios</option>
+                                                                <option data-subtext="A TODO EL PERSONAL DEL HIMFG" value="HIMG001">--</option>
+                                                                <option data-subtext="A TODOS LOS DIRECTORES, SUBDIRECTORES Y JEFES DE DEPARTAMENTO DEL HIMFG" value="HIMG002">--</option>
+                                                                <option value="0" selected >Dpto.</option>
+                            <sql:query var="qareas_otro" dataSource="jdbc/MEDICA">
+                                select clave, upper(cdescripcion) cdescripcion from ctl_departamentos 
+                                where clave != 2000
+                                order by clave asc
+                            </sql:query>
+                            <c:forEach var="areas_otro" begin="0" items="${qareas_otro.rowsByIndex}">
+                                <option data-subtext="${areas_otro[1]}" value="${areas_otro[0]}">${areas_otro[0]}</option>
+                            </c:forEach>
+                        </select>
+                    </div>-->
                         </div>
                         <div class="col-md-6">
-                            <label for="icbonomrec">Nombre(Dirigido a):</label>
+                            <label for="icbonomrec">Nombre(Dirigido a)*:</label>
                             <div id="divcbodestinatario">
                                 <select style="width: 350px;" name="" id=""  class="selectpicker form-control" data-live-search="false">
                                     <option value="0">Seleccione...</option>                           
@@ -341,15 +382,15 @@
                                 <div class="card-body">                    
                                     <div class="form-group row">
                                         <div class="col-md-3 mb-3 mb-lg-0">
-                                            <label for="iotrondest">Nombre:</label>
+                                            <label for="iotrondest">Nombre*:</label>
                                             <input type="text" class="form-control input-b" id="iotrondest" name="iotrondest" onchange="fnupperfg(this)" placeholder="Nombre">
                                         </div>
                                         <div class="col-md-3 mb-3 mb-lg-0">
-                                            <label for="iotroap1dest">Apellido1:</label>
+                                            <label for="iotroap1dest">Apellido1*:</label>
                                             <input type="text" class="form-control input-b" id="iotroap1dest" name="iotroap1dest" onchange="fnupperfg(this)" placeholder="Apellido1">
                                         </div>
                                         <div class="col-md-3 mb-3 mb-lg-0">
-                                            <label for="iotroap2dest">Apellido2:</label>
+                                            <label for="iotroap2dest">Apellido2*:</label>
                                             <input type="text" class="form-control input-b" id="iotroap2dest" name="iotroap2dest" onchange="fnupperfg(this)" placeholder="Apellido2">
                                         </div>
                                         <br>
@@ -380,15 +421,9 @@
                         <div class="_adddestcont">
 
                         </div>
-
                     </div>
-
                 </div>
-
                 <hr/>
-
-
-
                 <div class="form-group row">
                     <div class="col-md-6">
                         <label for="icbonomrec">Turnado a:</label>
@@ -404,7 +439,7 @@
                         </select>
                     </div>                    
                     <div class="col-md-6">
-                        <label for="ifecha_limresp">Fecha limite de respuesta:</label>
+                        <label for="ifecha_limresp">Fecha limite de respuesta*:</label>
                         <input type="text" class="form-control input-b" id="ifecha_limresp" name="ifecha_limresp" placeholder="Fecha limite de respuesta" readonly>
                     </div>                 
                 </div>
@@ -543,7 +578,6 @@
                     $("#nom_remitente_sn").val(''); //nom sin num de oficio
                     $('#dep_remitente').val('');
 
-
                     // SE ENVIO POR CORREO 
                     $("#chk-correo").click(function () {
                         if ($('#chk-correo').prop('checked')) {
@@ -557,9 +591,7 @@
                         }
                     });
 
-
                 } else {
-                    //alert("aquiiiiii coooon ");
                     $('#divnumof').show();
                     $('#depto_cn').show();
                     $('#divnumof_sin').hide();
@@ -568,9 +600,25 @@
                     $('#chk-correo').prop('checked', false);
                     $('#iotro_numof').attr('disabled', false);
                     $("#iotro_numof").removeAttr("style");
+                    //ESCONDE LOSELEMENTOS EN CASO DE QUE ESTE SELECCCIONADO JURIDICO, OIC, QUEJAS
+                    $('._divjuridico').removeClass('_show');
+                    $('._divjuridico').addClass('_hide');
+                    $('._divoicq').removeClass('_show');
+                    $('._divoicq').addClass('_hide');
+                    $('._oicqvalue').html('');
+
                 }
             });
 
+            $("#chk-ausencia").click(function () {
+                if ($('#chk-ausencia').prop('checked')) { // firma alguien por ausencia                 
+                    $('#div_ausencia').show();
+                } else {
+                    $('#div_ausencia').hide();
+                    $("#nom_ausencia").val('');
+
+                }
+            });
 
             //btnremoveall
             $('.btnremoveall').click(function () {
@@ -579,26 +627,15 @@
                 cuentadest = 0;
             });
 
-
             //btnadddest
             $('.btnadddest').click(function () {
                 cuentadest++;
-
-                //sinue
-                //alert('lol')
-                //_adddestcont
-                //$('._adddestcont').load('_adddest.jsp?valor=1');
-
-
                 var content;
                 $.get('_adddest.jsp?item=' + cuentadest, function (data) {
                     content = data;
                     $('._adddestcont').append(data);
                 });
-
             });
-            //
-            //
             //CC
             $('#chk-cc').click(function () {
                 //_adddestdiv
@@ -645,24 +682,22 @@
                 success: function (data) {
                     // alert("aquiiiiiiiiii");
                     if (data.done === 0) {
-
                         //cuando el folio del oficio ya existe
                         conf = data.confirma;
                         conf_folio = data.conf_folio;
                         if (conf) {
                             alert("El folio," + conf_folio + ", ya existe para este departamento, se le agregará un consecutivo.");
                         }
-
                         let result = data.elemento.includes("|");
                         if (result) {
                             const words = data.elemento.split('|');
-                            alert(words[1])
+                            //  alert(words[1]);
                             var vindex = words[1] - 1;
                             var ell = $('._adddestcont').children('.card').eq(vindex).find('.clcbodepto');
                             ell.trigger('focus');
-                            $('html, body').animate({scrollTop: $('#' + ell).offset().top - 86}, 15);
-                            //$('#' + elemento).trigger('focus');
-
+                            // $('html, body').animate({scrollTop: $('#' + ell).offset().top - 86}, 15);                          
+                            $('html, body').animate({scrollTop: $('#cbodepto_dest_' + words[1]).offset().top - 86}, 15);
+                            alert(data.mensaje);
                         } else {
                             elemento = data.elemento;
                             alert(data.mensaje);
@@ -673,8 +708,12 @@
                     } else {
                         // alert(data.mensaje);
                         id_oficio = data.id_oficio;
-                        alert("El oficio se registro correctamente, FOLIO CONSECUTIVO: " + id_oficio);
-                        window.top.location.href = '/medica/oficios/list_oficios_rec.jsp?';
+                        //modalfinish
+                        $('.bodyfinish').html('El oficio se registro correctamente, FOLIO CONSECUTIVO: ' + id_oficio + '<br/>Desea adjuntar archivos?')
+                        $('#modalfinish').modal('toggle');
+                        $('#frmattach').attr('action', '<%=request.getContextPath()%>/u/uploadFiles?id_oficio=' + id_oficio);
+                        //alert("El oficio se registro correctamente, FOLIO CONSECUTIVO: " + id_oficio);
+                        //window.top.location.href = '/medica/oficios/list_oficios_rec.jsp?';
                         $('.btnguardar').attr("disabled", true);
                         $('.btnguardar').append('<img src="../images/loading.gif" width="11" height="11" alt="" />');
                     }
@@ -683,7 +722,69 @@
                     $('.btnguardar').attr("disabled", false);
                 }
             });
+            //doclose
+            $(".doclose").click(function () {
+                window.top.location.href = '/medica/oficios/list_oficios_rec.jsp?';
+            });
 
+
+            $('#ifileattach').on('change', function (e) {
+
+                if (this.files.length > 0) {
+
+
+                    $("#frmattach").submit();
+                } else {
+                    return false;
+                }
+
+            });
+
+            $('form#frmattach').ajaxForm({
+                dataType: 'json',
+                success: function (data) {
+                    if (data.done === 1) {
+                        $('.adjerror').html('');
+
+                    } else {
+
+                        $('.adjerror').html(data.mensaje);
+
+                    }
+                },
+                error: function (data) {
+                    $('.alertg').show();
+                    $('.alertg').html('');
+                    $('.alertg').html(data.error);
+                },
+                beforeSubmit: function () {
+                    $('.btnarchivos').attr("disabled", true);
+                },
+                uploadProgress: function (event, position, total, percentComplete) {
+                    $('.progress').show();
+                    var percentVal = percentComplete + '%';
+                    //alert(percentVal)
+                    /*if (percentComplete < 33) {
+                     $('.bar').css('background-color', '#FF0000');
+                     }
+                     if (percentComplete > 33 && percentComplete < 66) {//#FFCC33
+                     $('.bar').css('background-color', '#FFCC33');
+                     }
+                     if (percentComplete > 90) {
+                     $('.bar').css('background-color', '#B4F5B4');
+                     }*/
+                    //#B4F5B4 background-color
+                    //$('.progress').csss('style:');
+                    //$(".progress-bar").attr("width",percentVal);
+                    $('.progress-bar').css('width', percentVal);
+                    //bar.width(percentVal)
+                    //percent.html(percentVal);
+                },
+                complete: function (xhr) {
+                    //$('.progress').hide();
+                    $('.progress-bar').css('width', '0%');
+                }
+            });
 
             $(function () {
                 $('[data-toggle="tooltip"]').tooltip();
@@ -697,12 +798,7 @@
                 } else {
                     vflagclose = 0;
                 }
-
-
-            })
-
-
-
+            });
 
         </script>
 

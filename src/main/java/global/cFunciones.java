@@ -4,7 +4,9 @@
  */
 package global;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -149,15 +151,15 @@ public class cFunciones {
 
         return validar;
     }
-    
-        public static boolean validateFecha(Connection connx, String fecha) throws NamingException, SQLException {
+
+    public static boolean validateFecha(Connection connx, String fecha) throws NamingException, SQLException {
 //      17/08/2024 09:66 ----17-08-2024 09:66
         String d = fecha.substring(0, 2);
         String m = fecha.substring(3, 5);
         String a = fecha.substring(6, 10);
         //String h = fecha.substring(11, 16);
         String fechanew = a + "-" + m + "-" + d;
-     //System.out.println("fecha--->" + fechanew);
+        //System.out.println("fecha--->" + fechanew);
         // System.out.println(" SELECT DATE('" + fechanew + "') as fecha");
         Statement statement = connx.createStatement();
         ResultSet resultSet = null;
@@ -178,11 +180,9 @@ public class cFunciones {
 
         return validar;
     }
-        
-        
 
     public static String f131_to_126(String fecha131) {
-        
+
         //01/01/2021 06:00 <--------> 2021-01-01 06:00:00
         //System.out.println("fecha131"+fecha131);
         String fecha126 = "";
@@ -200,9 +200,9 @@ public class cFunciones {
 
         return fecha126;
     }
-    
-        public static String f131_to_112(String fecha131) {
-        
+
+    public static String f131_to_112(String fecha131) {
+
         //01/01/2021 <--------> 20210101
         //System.out.println("fecha131"+fecha131);
         String fecha112 = "";
@@ -210,7 +210,7 @@ public class cFunciones {
             String d = fecha131.substring(0, 2);
             String m = fecha131.substring(3, 5);
             String a = fecha131.substring(6, 10);
-          //  String h = fecha131.substring(11, 16);
+            //  String h = fecha131.substring(11, 16);
             fecha112 = a + m + d;
 
             // System.out.println("fecha126"+fecha126);
@@ -223,7 +223,7 @@ public class cFunciones {
 
     public static String f131_to_126_NUM(String fecha131) {
         //01/01/2021 06:00 <--------> 2021-01-01 06:00:00
-         
+
         //System.out.println("fecha131"+fecha131);
         String fecha126 = "";
         try {
@@ -244,7 +244,6 @@ public class cFunciones {
 
     public static String getNOWFechaDDMMYYYHHMM(Connection connx) throws NamingException, SQLException {
 //      17/08/2024 09:66 ----17-08-2024 09:66
-
         Statement statement = connx.createStatement();
         ResultSet resultSet = null;
         String sfecha = "";
@@ -260,23 +259,120 @@ public class cFunciones {
             DbUtils.closeQuietly(resultSet);
             DbUtils.closeQuietly(statement);
         }
-
         return sfecha;
     }
 
-    public static String getNomServXclave(String idservicio) throws SQLException, Exception {
-        //System.out.println("dfsdfsdf---->" + idservicio);
+    public static String getNomenclaturaOicioXFolio(String idoficio, String sn) throws SQLException, Exception {
+        //System.out.println("dfsdfsdf---->" + idoficio);
+        //OBTIENE EL NOMBRE DEL DEPARTAMENTO CON BASE EN EL NÚMERO DE OFICIO
         Context ctx = new InitialContext();
         Context envctx = (Context) ctx.lookup("java:comp/env");
         DataSource ds = (DataSource) envctx.lookup("jdbc/MEDICA");
         Connection connx = ds.getConnection();
         Statement statement = connx.createStatement();
         ResultSet resultSet = null;
+        String nomen_oficio = "";
+        try {
+            if (sn.equals("S/N")) {
+                nomen_oficio = "";
+            } else {
+                resultSet = statement.executeQuery("select id_dpto_remit , num_of , annio,  IFNULL(nome_jur,'')  from of_recepcion where idof_recepcion = " + idoficio + "  ");
+                if (resultSet.next()) {
+                    switch (resultSet.getInt(1)) {
+                        case 1010: //juridico
+                            nomen_oficio = resultSet.getInt(1) + "/" + resultSet.getString(4).trim() + "/" + resultSet.getInt(2) + "/" + resultSet.getInt(3);
+                            break;
+                        case 7000: //OIC
+                            nomen_oficio = "HIM /12200/" + resultSet.getInt(1) + "/" + resultSet.getInt(2) + "/" + resultSet.getInt(3);
+                            break;
+                        case 7030: //QUEJAS
+                            nomen_oficio = "HIM /12200/" + resultSet.getInt(1) + "/" + resultSet.getInt(2) + "/" + resultSet.getInt(3);
+                            break;
+                        default: // TODOS LOS DEMAS
+                            nomen_oficio = resultSet.getInt(1) + "/" + resultSet.getInt(2) + "/" + resultSet.getInt(3);
+                            break;
+                    }
+//                    if (resultSet.getInt(1)== 1010) { //juridico
+//                        nomen_oficio = resultSet.getString(1).trim() + "/" + resultSet.getString(4).trim() + "/" + resultSet.getString(2).trim() + "/" + resultSet.getString(3).trim();
+//                    } else if (resultSet.getString(1).trim().equals("7000")) { // oic
+//                        nomen_oficio = "HIM /12200/" + resultSet.getString(1).trim() + "/" + resultSet.getString(2).trim() + "/" + resultSet.getString(3).trim();
+//                    } else if (resultSet.getString(1).trim().equals("7030")) { //ÁREA DE QUEJAS, DENUNCIAS E INVESTIGACIONES
+//                        nomen_oficio = "HIM /12200/" + resultSet.getString(1).trim() + "/" + resultSet.getString(2).trim() + "/" + resultSet.getString(3).trim();
+//                    } else {
+//                        nomen_oficio = resultSet.getString(1).trim() + "/" + resultSet.getString(2).trim() + "/" + resultSet.getString(3).trim();
+//                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error --> ", e);
+        } finally {
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+            if (connx != null) {
+                try {
+                    connx.close();
+                } catch (SQLException ignore) {
+                }
+            }
+        }
+        return nomen_oficio;
+    }
 
+    public static String getNomServDestXFolio(String idoficio) throws SQLException, Exception {
+        //System.out.println("dfsdfsdf---->" + idoficio);
+        //OBTIENE EL NOMBRE DEL DEPARTAMENTO CON BASE EN EL NÚMERO DE OFICIO
+        Context ctx = new InitialContext();
+        Context envctx = (Context) ctx.lookup("java:comp/env");
+        DataSource ds = (DataSource) envctx.lookup("jdbc/MEDICA");
+        Connection connx = ds.getConnection();
+        Statement statement = connx.createStatement();
+        ResultSet resultSet = null;
+        String name_servicio = "";
+        int cuenta = 0;
+        try {
+            resultSet = statement.executeQuery("select id_depto from of_recepcion_dest where idof_recepcion = " + idoficio + "  ");
+            //System.out.println("select id_depto from of_recepcion_dest where idof_recepcion = " + idoficio + "  ");
+            while (resultSet.next()) {
+                if (cuenta == 0) {
+                    name_servicio = getNomServXclave(resultSet.getString("id_depto"));
+                } else {
+                    name_servicio += ", " + getNomServXclave(resultSet.getString("id_depto"));
+                }
+                cuenta++;
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error --> ", e);
+        } finally {
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+            if (connx != null) {
+                try {
+                    connx.close();
+                } catch (SQLException ignore) {
+                }
+            }
+        }
+        return name_servicio;
+    }
+
+    public static String getNomServXclave(String idservicio) throws SQLException, Exception {
+        //OBTIENE EL NOMBRE DEL DEPARTAMENTO CON BASE EN SU CLAVE
+        // System.out.println("dianannanana---->" + idservicio);
+        Context ctx = new InitialContext();
+        Context envctx = (Context) ctx.lookup("java:comp/env");
+        DataSource ds = (DataSource) envctx.lookup("jdbc/MEDICA");
+        Connection connx = ds.getConnection();
+        Statement statement = connx.createStatement();
+        ResultSet resultSet = null;
         String name_servicio = "";
         try {
-            // select cdescripcion from ctl_departamentos where clave ='2000'
-            resultSet = statement.executeQuery("select cdescripcion from ctl_departamentos where clave = " + idservicio + "  ");
+            if (idservicio.trim().substring(0, 1).equals("G")) {
+                resultSet = statement.executeQuery("select upper(cdescripcion) as cdescripcion   from of_ctl_grupos where id_grupo = '" + idservicio + "'  ");
+            } else {
+                resultSet = statement.executeQuery("select upper(cdescripcion) as cdescripcion  from ctl_departamentos where clave = " + idservicio + " ");
+            }
+
             if (resultSet.next()) {
                 name_servicio = resultSet.getString("cdescripcion");
             } else {
@@ -297,8 +393,44 @@ public class cFunciones {
         return name_servicio;
     }
 
+    public static String getNomPersDestXFolio(String idoficio) throws SQLException, Exception {
+        //System.out.println("dfsdfsdf---->" + idoficio);
+        Context ctx = new InitialContext();
+        Context envctx = (Context) ctx.lookup("java:comp/env");
+        DataSource ds = (DataSource) envctx.lookup("jdbc/MEDICA");
+        Connection connx = ds.getConnection();
+        Statement statement = connx.createStatement();
+        ResultSet resultSet = null;
+        String name_personal = "";
+        int cuenta = 0;
+        try {
+            resultSet = statement.executeQuery("select id_nombre from of_recepcion_dest where idof_recepcion = " + idoficio + "  ");
+            while (resultSet.next()) {
+                if (cuenta == 0) {
+                    name_personal = getNomPersonaXid(resultSet.getString("id_nombre"));
+                } else {
+                    name_personal += ", " + getNomPersonaXid(resultSet.getString("id_nombre"));
+                }
+                cuenta++;
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error --> ", e);
+        } finally {
+            DbUtils.closeQuietly(resultSet);
+            DbUtils.closeQuietly(statement);
+            if (connx != null) {
+                try {
+                    connx.close();
+                } catch (SQLException ignore) {
+                }
+            }
+        }
+        return name_personal;
+    }
+
     public static String getNomPersonaXid(String idpersonal) throws SQLException, Exception {
-        // System.out.println("idname---->" + idpersonal);
+        //System.out.println("idname---->" + idpersonal);
         Context ctx = new InitialContext();
         Context envctx = (Context) ctx.lookup("java:comp/env");
         DataSource ds = (DataSource) envctx.lookup("jdbc/MEDICA");
@@ -308,11 +440,11 @@ public class cFunciones {
         String name = "";
         try {
             // select cdescripcion from ctl_departamentos where clave ='2000'
-            resultSet = statement.executeQuery("select CONCAT(nombre, ' ', apellido1, ' ', apellido2) as nombre from of_usr_oficios where id = " + idpersonal + "  ");
+            resultSet = statement.executeQuery("select UPPER(CONCAT(nombre, ' ', apellido1, ' ', apellido2)) as nombre from of_usr_oficios where id = " + idpersonal + "  ");
             if (resultSet.next()) {
                 name = resultSet.getString("nombre");
             } else {
-                name = " ";
+                name = "GRUPO";
             }
         } catch (Exception e) {
             throw new RuntimeException("Error --> ", e);
@@ -327,6 +459,22 @@ public class cFunciones {
             }
         }
         return name;
+    }
+
+    public static String limitaTexto(String s, int limita) {
+        // System.out.println("@@@@|1");
+        String valor = "";
+        if (s != null) {
+            s = StringEscapeUtils.unescapeHtml(s);
+            valor = s.trim();
+            if (valor.length() > limita) {
+                valor = valor.substring(0, limita) + "...";
+            }
+            valor = StringEscapeUtils.escapeHtml(valor);
+        } else {
+
+        }
+        return valor.trim();
     }
 
     public static String getnumOf_or_RefXid(String idoficio) throws SQLException, Exception {
@@ -368,7 +516,7 @@ public class cFunciones {
     }
 
     public static String ifOfvencidoxid(String idoficio) throws SQLException, Exception {
-       // System.out.println("idoficiommmm---->" + idoficio);
+        // System.out.println("idoficiommmm---->" + idoficio);
         Context ctx = new InitialContext();
         Context envctx = (Context) ctx.lookup("java:comp/env");
         DataSource ds = (DataSource) envctx.lookup("jdbc/MEDICA");
@@ -384,10 +532,9 @@ public class cFunciones {
                 flimite = resultSet.getString("fecha_limiter");
                 frecepcion = resultSet.getString("fecha_recepcion");
             }
-            
+
             //System.out.println(flimite);
- 
-           valor = flimite;
+            valor = flimite;
             BigInteger biFechaRec = new BigInteger(frecepcion);
             BigInteger biFechaLimite = new BigInteger(flimite);
             switch (biFechaRec.compareTo(biFechaLimite)) {
@@ -395,7 +542,7 @@ public class cFunciones {
                     valor = "Vencido";
                     break;
                 default:
-                      valor = "";
+                    valor = "";
                     break;
             }
 
@@ -412,6 +559,62 @@ public class cFunciones {
             }
         }
         return valor;
+    }
+
+    public static String getSizeFromBytes(double dbytes, int formato) {
+
+        double result = 0;
+        double bytes = dbytes;
+        double kilobytes = (bytes / 1024);
+        double megabytes = (kilobytes / 1024);
+        double gigabytes = (megabytes / 1024);
+        double terabytes = (gigabytes / 1024);
+        double petabytes = (terabytes / 1024);
+        double exabytes = (petabytes / 1024);
+        double zettabytes = (exabytes / 1024);
+        double yottabytes = (zettabytes / 1024);
+        BigDecimal big = null;
+
+        switch (formato) {
+            case 0:
+                return "" + bytes;
+            case 1:
+                big = new BigDecimal(kilobytes);
+                big = big.setScale(3, RoundingMode.UP);
+                return "" + big + " kb";
+            case 2:
+                big = new BigDecimal(megabytes);
+                big = big.setScale(3, RoundingMode.UP);
+                return "" + big + " Mb";
+            case 3:
+                big = new BigDecimal(gigabytes);
+                big = big.setScale(3, RoundingMode.UP);
+                return "" + big + " Gb";
+            case 4:
+                big = new BigDecimal(terabytes);
+                big = big.setScale(3, RoundingMode.UP);
+                return "" + big;
+            case 5:
+                big = new BigDecimal(petabytes);
+                big = big.setScale(3, RoundingMode.UP);
+                return "" + big;
+            case 6:
+                big = new BigDecimal(exabytes);
+                big = big.setScale(3, RoundingMode.UP);
+                return "" + big;
+            case 7:
+                big = new BigDecimal(zettabytes);
+                big = big.setScale(3, RoundingMode.UP);
+                return "" + big;
+            case 8:
+                big = new BigDecimal(kilobytes);
+                big = big.setScale(0, RoundingMode.UP);
+                return "" + big + " kb";
+            default:
+                return "";
+        }
+
+        //return 0;
     }
 
     public static String charespecial(String s) { //sinue

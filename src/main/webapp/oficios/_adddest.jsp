@@ -18,9 +18,14 @@
             <label for="icbonomrec">Departamento:</label> <!-- puede ser a la dirección médica o a otro departamento depende de C.C-->
 
             <select id="cbodepto_dest_<%=request.getParameter("item")%>" name="cbodeptod" class="selectpicker form-control clcbodepto"  data-show-subtext="true" data-live-search="true">   
-                <option value="0" selected >Varios</option>
-                <option data-subtext="A TODO EL PERSONAL DEL HIMFG" value="HIMG001">--</option>
-                <option data-subtext="A TODOS LOS DIRECTORES, SUBDIRECTORES Y JEFES DE DEPARTAMENTO DEL HIMFG" value="HIMG002">--</option>
+                <option value="0" selected >Grupos</option>
+                <sql:query var="qgrupos_otro" dataSource="jdbc/MEDICA">
+                    SELECT id_grupo , cdescripcion 
+                    from of_ctl_grupos where cstatus =1
+                </sql:query>
+                <c:forEach var="grupos_otro" begin="0" items="${qgrupos_otro.rowsByIndex}">
+                    <option data-subtext="${grupos_otro[1]}" value="${grupos_otro[0]}">${grupos_otro[0]}</option>
+                </c:forEach>   
                 <option value="0" selected >Dpto.</option>
                 <sql:query var="qareas_otro" dataSource="jdbc/MEDICA">
                     select clave, upper(cdescripcion) cdescripcion from ctl_departamentos 
@@ -33,7 +38,7 @@
             </select>
         </div>
         <div class="col-md-6">
-            <label for="icbonomrec">Nombre(Dirigido a):</label>
+            <label for="icbonomrec" id="divlabelcbodestinatario_<%=request.getParameter("item")%>">Nombre(Dirigido a):</label>
             <div id="divcbodestinatario_<%=request.getParameter("item")%>">
                 <select style="width: 350px;" name="cbonomrecdef_<%=request.getParameter("item")%>" id="cbonomrecdef_<%=request.getParameter("item")%>"  class="selectpicker form-control" data-live-search="false" disabled>
                     <option value="0">Seleccione...</option>                           
@@ -41,7 +46,7 @@
             </div>
         </div>
         <div id="divotrodestinatario_<%=request.getParameter("item")%>" class="otrodestinatarioname_<%=request.getParameter("item")%>" style="display: none">  
-            
+
         </div>
 
         <script type="text/javascript">
@@ -50,25 +55,31 @@
 
             //$('#divcbodestinatario_<%=request.getParameter("item")%>').load('../consultas/cboUsuariosdest.jsp?valor=2000&item=<%=request.getParameter("item")%>');
 
-
             $("#cbodepto_dest_<%=request.getParameter("item")%>").change(function () {
-                
                 var id = $(this).val();
-                $('#cbodepto_dest_<%=request.getParameter("item")%>').selectpicker('refresh');
-                $('#divcbodestinatario_<%=request.getParameter("item")%>').load('../consultas/cboUsuariosdest.jsp?valor=' + id + '&item=<%=request.getParameter("item")%>');
-                $("#iotrondest_<%=request.getParameter("item")%>").val('');
-                $("#iotroap1dest_<%=request.getParameter("item")%>").val('');
-                $("#iotroap2dest_<%=request.getParameter("item")%>").val('');
-                $('.otrodestinatarioname_<%=request.getParameter("item")%>').hide();
+                //alert("diana" + id.substring(0, 1));
+                if (id.substring(0, 1) === 'G') {
+                    $('#divlabelcbodestinatario_<%=request.getParameter("item")%>').hide();
+                    $('#divcbodestinatario_<%=request.getParameter("item")%>').hide();
+
+                } else {
+                    $('#divlabelcbodestinatario_<%=request.getParameter("item")%>').show();
+                    $('#divcbodestinatario_<%=request.getParameter("item")%>').show();
+
+                    $('#cbodepto_dest_<%=request.getParameter("item")%>').selectpicker('refresh');
+                    $('#divcbodestinatario_<%=request.getParameter("item")%>').load('../consultas/cboUsuariosdest.jsp?valor=' + id + '&item=<%=request.getParameter("item")%>');
+                    $("#iotrondest_<%=request.getParameter("item")%>").val('');
+                    $("#iotroap1dest_<%=request.getParameter("item")%>").val('');
+                    $("#iotroap2dest_<%=request.getParameter("item")%>").val('');
+                    $('.otrodestinatarioname_<%=request.getParameter("item")%>').hide();
+                }
             });
 
-        
-            
-             $(".removedest_<%=request.getParameter("item")%>").click(function () {
+            $(".removedest_<%=request.getParameter("item")%>").click(function () {
                 $(".card_<%=request.getParameter("item")%>").remove();
-             });
-            
-            
+            });
+
+
         </script>
 
 

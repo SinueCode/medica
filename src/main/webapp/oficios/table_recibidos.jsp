@@ -6,6 +6,40 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<div class="modal fade" id="modalattach" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Adjuntar</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bodyattach">
+                <div class="row">
+                    <div class="col-md">
+
+                        <form id="frmattach" method="POST" class="" enctype="multipart/form-data"  action="<%=request.getContextPath()%>/u/uploadFiles?id_oficio=46">
+                            <input type="file" class="form-control" style="height:auto;" id="ifileattach" name="archivos" multiple="">
+                        </form>
+
+                        <span class="alert-danger adjerror"></span>
+                    </div>
+                </div> 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ui-tooltip{
+        max-width: 800px !important;
+        width: auto !important;
+        overflow:auto !important;
+    }
+
+</style>
 
 <%
     String sFiltro = " where DATE_FORMAT(O.fecha_recepcion,'%Y%m%d') between '" + request.getParameter("fi").toString().trim() + "' and  '" + request.getParameter("ff").toString().trim() + "' ";
@@ -29,10 +63,7 @@
     , O.id_clasif
     , O.id_sub_clasif
     , IFNULL(C.cdescripcion, " ")
-    
- 
-    
-   -- , C.cdescripcion AS carpeta
+    -- , C.cdescripcion AS carpeta
     , asunto
     , O.observaciones
     , IF(O.cc = 1, "C.C.", " ") as CC
@@ -103,7 +134,7 @@
                 <td> ${resultados[0]}</td>
                 <td>${resultados[1]} </td>
                 <td>${resultados[2]} </td>                                                                              
-                <td><b>${resultados[3]}</b></td> 
+                <td><b> <%=global.cFunciones.getNomenclaturaOicioXFolio(pageContext.getAttribute("num_folio").toString(), pageContext.getAttribute("sn").toString())%> </b></td> 
                 <td><b>${resultados[4]}</b></td> 
                 <td>${resultados[5]} </td>   
                 <%
@@ -123,19 +154,38 @@
                 <td>${resultados[12]} </td>
                 <td>${resultados[13]} </td> 
                 <td>${resultados[14]} </td>
-                <td>${resultados[15]} </td>                                        
-                <td><%=global.cFunciones.getNomServXclave(pageContext.getAttribute("id_dpto_destinat").toString())%>  </td>
+                <td>${resultados[15]} </td>  
+                <%
+                    if (pageContext.getAttribute("cc").equals("C.C.")) {
+                %>
+                <td>
+                    <%=global.cFunciones.getNomServDestXFolio(pageContext.getAttribute("num_folio").toString())%>
+                    <!--<svg data-toggle="tooltip"  title="<%=global.cFunciones.getNomServDestXFolio(pageContext.getAttribute("num_folio").toString())%>" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
+                    <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2"/>
+                    </svg>-->
+                </td>
+                <td> 
+                    <%=global.cFunciones.getNomPersDestXFolio(pageContext.getAttribute("num_folio").toString())%>
+                    <!--<svg data-toggle="tooltip"  title="<%=global.cFunciones.getNomPersDestXFolio(pageContext.getAttribute("num_folio").toString())%>"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
+                    </svg>-->
+                </td>
+                <% } else {
+                %>
+                <td><%=global.cFunciones.getNomServXclave(pageContext.getAttribute("id_dpto_destinat").toString())%>
                 <td><%=global.cFunciones.getNomPersonaXid(pageContext.getAttribute("id_nom_destinat").toString())%>  </td>
+                <%
+                    }
+                %> 
                 <td><%=global.cFunciones.getNomServXclave(pageContext.getAttribute("id_depto_turnadoa").toString())%>  </td>
                 <td>${resultados[19]} </td>
                 <td>${resultados[22]}</td>
                 <td><%=global.cFunciones.ifOfvencidoxid(pageContext.getAttribute("num_folio").toString())%>  </td>
                 <td>
-                    <div class="dropdown">
+                    <div class="dropdown" id="sub-menu-medica">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                             Acciones
                         </button>
-
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                             <%
                                 if (pageContext.getAttribute("cstatus").equals("P")) {
@@ -144,7 +194,7 @@
                                 <%
                                     }
                                 %>
-                            <li><a class="dropdown-item" onclick="">Adjuntar archivo</a></li>
+                            <li><a class="dropdown-item doadj" rel="${num_folio}" onclick="">Adjuntar archivo</a></li>
                         </ul>
 
                     </div>
@@ -156,6 +206,83 @@
 
 
 <script type="text/javascript">
+
+    //doadj  //bodyattach
+    var idoficio = 0;
+    $(".doadj").click(function () {
+
+        idoficio = $(this).attr('rel');
+        $('#frmattach').attr('action', '<%=request.getContextPath()%>/u/uploadFiles?id_oficio=' + idoficio);
+        $('#modalattach').modal('toggle');
+
+
+    });
+    $('#ifileattach').on('change', function (e) {
+
+        if (this.files.length > 0) {
+
+
+            $("#frmattach").submit();
+        } else {
+            return false;
+        }
+
+    });
+
+    $('form#frmattach').ajaxForm({
+        dataType: 'json',
+        success: function (data) {
+            if (data.done === 1) {
+                $('.adjerror').html('');
+
+            } else {
+
+                $('.adjerror').html(data.mensaje);
+
+            }
+        },
+        error: function (data) {
+            $('.alertg').show();
+            $('.alertg').html('');
+            $('.alertg').html(data.error);
+        },
+        beforeSubmit: function () {
+            $('.btnarchivos').attr("disabled", true);
+        },
+        uploadProgress: function (event, position, total, percentComplete) {
+            $('.progress').show();
+            var percentVal = percentComplete + '%';
+            //alert(percentVal)
+            /*if (percentComplete < 33) {
+             $('.bar').css('background-color', '#FF0000');
+             }
+             if (percentComplete > 33 && percentComplete < 66) {//#FFCC33
+             $('.bar').css('background-color', '#FFCC33');
+             }
+             if (percentComplete > 90) {
+             $('.bar').css('background-color', '#B4F5B4');
+             }*/
+            //#B4F5B4 background-color
+            //$('.progress').csss('style:');
+            //$(".progress-bar").attr("width",percentVal);
+            $('.progress-bar').css('width', percentVal);
+            //bar.width(percentVal)
+            //percent.html(percentVal);
+        },
+        complete: function (xhr) {
+            //$('.progress').hide();
+            $('.progress-bar').css('width', '0%');
+        }
+    });
+
+
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip({
+            placement: 'right'
+
+        });
+    });
     new DataTable('#tbl_ofrec_dm', {
         language: {
             url: '<%=request.getContextPath()%>/js/datatable/es-MX.json'
@@ -187,4 +314,8 @@
                 // ,columnDefs: [{ visible: false, targets: 18 }]
 
     });
+    fntables.init();
+
+
+
 </script>
